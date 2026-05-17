@@ -13,7 +13,7 @@
 
 ---
 
-**WHEYO** is not just a food app. It's a high-octane macro-management system for the student-athlete. Designed with a brutalist, high-contrast aesthetic, it delivers precision-tracked protein meals right to your campus doorstep.
+**WHEYO** is a high-octane macro-management system for the student-athlete. Designed with a brutalist, high-contrast aesthetic, it delivers precision-tracked protein meals right to your campus doorstep.
 
 [**VIEW THE LIVE SITE**](https://wheyo.vercel.app)
 
