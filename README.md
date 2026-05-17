@@ -1,110 +1,114 @@
 <div align="center">
-
-```text
-  _          _   _  ________     __ ____  
- | |    | | | | | ||  ____\ \   / // __ \ 
- | | /| | | | |_| || |__   \ \_/ /| |  | |
- | |/  \| | |  _  ||  __|   \   / | |  | |
- |   /\   | | | | || |____   | |  | |__| |
-  \_/  \_/  |_| |_||______|  |_|   \____/ 
-```
-
-# ⚡ WHEYO: SYSTEM OVERRIDE ⚡
-### *THE ULTIMATE MACRO-ENGINE FOR THE MODERN ATHLETE*
-
-[![Framework: React](https://img.shields.io/badge/Engine-React_19-blue?style=for-the-badge&logo=react&logoColor=white)](https://react.dev/)
-[![Styling: Tailwind](https://img.shields.io/badge/Tactical-Tailwind_4.0-06B6D4?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![Database: Supabase](https://img.shields.io/badge/Neural-Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
-[![Motion: Kinetic](https://img.shields.io/badge/Kinetic-Motion.dev-ff0055?style=for-the-badge&logo=framer&logoColor=white)](https://motion.dev/)
-
----
-
-**WHEYO** is a high-performance protein meal platform that liquidates the gap between "Cafeteria Slop" and "Elite Nutrition." Built for those who treat their body like a high-precision machine.
-
-[**⚡ ENTER THE LOCKER ROOM ⚡**](https://ais-pre-27d4z2mfmf7vcc6kmbf44k-61252224755.asia-southeast1.run.app)
-
+  <img src="./Wheyobanner.png" width="80%" alt="Wheyo Banner"/>
+  <p><i>The Hustler's Pride.</i></p>
 </div>
 
-## 🧬 NEURAL INTERFACE FEATURES
+# WHEYO: PRECISION FUEL
+### *Shattering the gap between "Cafeteria Food" and "Peak Performance"*
 
-- **🎯 MACRO-PRECISION LOGISTICS**: Every meal is a data point. Pre-calculated Protein (PRO) and Calories (KCAL) are baked into every menu item.
-- **📈 PROTEIN OVERDRIVE TRACKER**: A dedicated dashboard in your profile to log daily intake, set hard targets, and visualize your 7-day gain-streak.
-- **🧮 TDEE/BMR TACTICAL COMPUTER**: Integrated calculator to determine your exact maintenance, cutting, and bulking zones. Stop guessing, start growing.
-- **📲 WHATSAPP EXTRACTION**: One-click checkout that serializes your order data and beams it directly to our kitchen via WhatsApp.
-- **📍 DYNAMIC EXTRACTION POINTS**: Select from campus hotspots (KLE, VTU Campus, Gogte Circle) or specify a custom extraction point.
-- **📜 MISSION LOGS**: Full order history within your profile. Track every batch from processing to delivery.
-- **🕹️ BRUTALIST AESTHETIC**: A high-speed, high-contrast interface designed for the focused. No fluff. Just fuel.
+[![Framework: React](https://img.shields.io/badge/Framework-React_19-blue?style=for-the-badge&logo=react)](https://react.dev/)
+[![Styling: Tailwind](https://img.shields.io/badge/Style-Tailwind_4.0-06B6D4?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
+[![Database: Supabase](https://img.shields.io/badge/Backend-Supabase-3ECF8E?style=for-the-badge&logo=supabase)](https://supabase.com/)
+[![Build: Vite](https://img.shields.io/badge/Build-Vite-646CFF?style=for-the-badge&logo=vite)](https://vitejs.dev/)
 
 ---
 
-## 🛠️ THE ARSENAL (TECH STACK)
+**WHEYO** is not just a food app. It's a high-octane macro-management system for the student-athlete. Designed with a brutalist, high-contrast aesthetic, it delivers precision-tracked protein meals right to your campus doorstep.
 
-| System | Module | Designation |
+[**VIEW THE LIVE SITE**](https://wheyo.vercel.app)
+
+## THE FEATURE STACK
+
+- **MACRO-ZERO TOLERANCE**: Every gram counted. Every calorie verified. View your fuel breakdown before you even add to cart.
+- **WHATSAPP WARP-SPEED**: No tedious forms. Just a direct link from your cart to our kitchen via WhatsApp.
+- **PROTEIN OVERDRIVE**: A dedicated dashboard to track your gains. Watch your daily intake climb with interactive charts.
+- **CAMPUS EXTRACTION POINTS**: Real-time pickup location selection. KLE? VTU? Gogte? We're there.
+- **BRUTALIST UI**: High-contrast, motion-heavy interface inspired by performance gear and digital cockpits.
+
+---
+
+## THE TECH OVERLAY
+
+| Component | Technology | Role |
 | :--- | :--- | :--- |
-| **PRIMARY CORE** | `React 19` | Main Processing Unit |
-| **VISUAL OVERLAY** | `Tailwind CSS 4.0` | Brutalist Visual Rendering |
-| **SYNAPTIC LINK** | `Supabase` | Real-time Neural Data Storage |
-| **KINETIC ENGINE** | `Motion.dev` | Fluid State Transitions |
-| **ANALYSIS TOOLS** | `Recharts` | Macro-Visual Interpretation |
+| **CORE** | `React 19` | High-Performance Engine |
+| **STYLE** | `Tailwind CSS 4.0` | Tactical Visuals |
+| **DATA** | `Supabase` | Neural Storage |
+| **MOTION** | `Motion.dev` | Kinetic Experience |
+| **CHARTS** | `Recharts` | Gain Visualization |
 
 ---
 
-## 🏗️ SYSTEM BOOT SEQUENCE
+## SYSTEM INITIALIZATION
 
-### 1. INITIALIZE THE ARRAY
+### 1. CLONE THE ARRAY
 ```bash
 git clone https://github.com/your-username/wheyo.git
 cd wheyo
 ```
 
-### 2. SYNC DEPENDENCIES
+### 2. INSTALL THE AUGMENTATIONS
 ```bash
 npm install
 ```
 
-### 3. ESTABLISH NEURAL LINK
-Generate a `.env` and inject your Supabase frequencies:
+### 3. CONFIGURE THE NEURAL LINK
+Create a `.env` file and link the Supabase frequency:
 ```env
 VITE_SUPABASE_URL=your_frequency_url
 VITE_SUPABASE_ANON_KEY=your_access_token
 ```
 
-### 4. ENGAGE SYSTEMS
+### 4. GO LIVE
 ```bash
 npm run dev
 ```
 
 ---
 
-## 📂 CORE DIRECTORY (INTERNAL MAPPING)
+## PROJECT ARCHITECTURE (MISSION CONTROL)
 
 ```text
 src/
-├── 🛡️ components/   # Tactile UI elements & Cart mechanics
-├── 🗺️ pages/        # High-concept views (Menu, Profile, Success)
-├── 🧪 lib/          # Direct Supabase synaptic lines
-├── 🧠 context/      # Global state (Auth & Cart memory)
-└── 🎨 index.css     # The brutalist visual foundation
+├──  components/   # Tactile UI elements & Cart mechanics
+├──  pages/        # High-concept views (Menu, Tracker, Success)
+├──  lib/          # Supabase synaptic connections
+├──  context/      # Global state (Identity & Fuel Cart)
+└──  index.css     # The design system
 ```
 
 ---
 
-## 🌪️ THE ATMOSPHERE
+## THE EXPERIENCE
 
 <div align="center">
-  <img src="https://images.unsplash.com/photo-1547592166-23ac45744acd?q=80&w=2671&auto=format&fit=crop" width="80%" alt="Wheyo Banner"/>
-  <p><i>THE DIGITAL COCKPIT FOR YOUR PHYSICAL ASCENSION.</i></p>
+  <img src="./menupage.png" width="80%" alt="Menu Page"/>
+  <p><i>Your fuel after the 5:00 AM workout.</i></p>
 </div>
 
 ---
 
-## 🤝 CONTRIBUTING TO THE CORE
-Detected a logic leak? Want to augment the macro-engine? Submit a pull request. Gains are communal.
+<div align="center">
+  <img src="./tracker.png" width="80%" alt="Tracker"/>
+  <p><i>The digital equivalent personal tracker.</i></p>
+</div>
 
-## 📄 LICENSE
-**MIT** - *Code is fuel. Use it or be left behind.*
+---
+
+<div align="center">
+  <img src="./TDEE.png" width="80%" alt="TDEE"/>
+  <p><i>Get the TDEE Calcutor and plan accordingly!</i></p>
+</div>
+
+---
+
+## JOIN THE CORE
+Found a bug? Want to optimize the macro-engine? Pull requests are the protein shakes of open source.
+
+## LICENSE
+**MIT** - *Code is meant to be free. Gains are meant to be yours.*
 
 <div align="center">
   <br/>
-  <b>FOR THE GRIND. BY THE GRIND.</b>
+  <b>MADE FOR THE GRIND.</b>
 </div>
