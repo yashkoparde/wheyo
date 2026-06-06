@@ -1,0 +1,6 @@
+{
+  "name": "Wheyo - MenuPage",
+  "description": "Gym-focused protein meal platform for college students with meal ordering via WhatsApp and a protein tracker system.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

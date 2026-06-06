@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="110" fill="#050505" stroke="#D4FF00" stroke-width="12"/>
+  <!-- Brutalist Grid Lines inside the badge for sports gear technical aesthetic -->
+  <line x1="56" y1="128" x2="456" y2="128" stroke="#1c1c1c" stroke-width="2" />
+  <line x1="56" y1="256" x2="456" y2="256" stroke="#1c1c1c" stroke-width="2" />
+  <line x1="56" y1="384" x2="456" y2="384" stroke="#1c1c1c" stroke-width="2" />
+  <line x1="128" y1="56" x2="128" y2="456" stroke="#1c1c1c" stroke-width="2" />
+  <line x1="256" y1="56" x2="256" y2="456" stroke="#1c1c1c" stroke-width="2" />
+  <line x1="384" y1="56" x2="384" y2="456" stroke="#1c1c1c" stroke-width="2" />
+  
+  <g transform="translate(0, 0)">
+    <!-- High-voltage stylized 'W' -->
+    <path d="M110 140 L195 380 L256 220 L317 380 L402 140 H335 L288 280 L256 180 L224 280 L177 140 Z" fill="#D4FF00" />
+    <!-- Dynamic Lightning Bolt running through the central core -->
+    <polygon points="256,120 280,240 245,240 265,340 215,220 250,220" fill="#FFFFFF" />
+  </g>
+</svg>
