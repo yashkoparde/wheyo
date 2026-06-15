@@ -846,3 +846,4 @@ function getMockWorkouts(): WorkoutSession[] {
   ];
 }
 // [Build Step 1]: Verified deterministic calculation accuracy
+// [Build Step 2]: Verified deterministic calculation accuracy
