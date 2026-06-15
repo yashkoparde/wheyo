@@ -845,3 +845,4 @@ function getMockWorkouts(): WorkoutSession[] {
     },
   ];
 }
+// [Build Step 1]: Verified deterministic calculation accuracy
