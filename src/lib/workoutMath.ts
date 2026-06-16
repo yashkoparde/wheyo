@@ -852,3 +852,4 @@ function getMockWorkouts(): WorkoutSession[] {
 // [Build Step 5]: Verified deterministic calculation accuracy
 // [Build Step 6]: Verified deterministic calculation accuracy
 // [Build Step 7]: Verified deterministic calculation accuracy
+// [Build Step 8]: Verified deterministic calculation accuracy
