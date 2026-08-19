@@ -4,6 +4,7 @@ import { X, Minus, Plus, ShoppingBag, ArrowRight, Trash2, Tag, MapPin, User, Pho
 import { useCart } from '../context/CartContext';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import { UpiPaymentModal } from './UpiPaymentModal';
 
 const WHATSAPP_ORDER_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || '918778168629';
 const FLAT_COUPON_CODE = import.meta.env.VITE_COUPON_FLAT_CODE || 'WHEYO50';
@@ -33,6 +34,7 @@ export function CartDrawer() {
   const [customerPhone, setCustomerPhone] = useState('');
   const [checkoutError, setCheckoutError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [qualifyingOrdersCount, setQualifyingOrdersCount] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -264,7 +266,7 @@ export function CartDrawer() {
   const activeDiscount = Math.max(discount, loyaltyDiscount);
   const finalPrice = Math.max(0, totalPrice - activeDiscount);
 
-  const handleCheckout = async () => {
+  const handleCheckout = () => {
     if (items.length === 0 || isSubmitting) return;
     
     if (!pickupPoint) {
@@ -284,7 +286,10 @@ export function CartDrawer() {
       return;
     }
     setCheckoutError('');
+    setIsPaymentModalOpen(true);
+  };
 
+  const finalizeCheckout = async () => {
     try {
       setIsSubmitting(true);
       
@@ -567,7 +572,7 @@ export function CartDrawer() {
               ) : (
                 <>
                   {/* Receiver Info at the top */}
-                  <div className="space-y-4 pb-4 border-b border-white/10">
+                  <div id="tour-cart-extraction" className="space-y-4 pb-4 border-b border-white/10">
                     <h3 className="text-[10px] font-mono text-[#D4FF00] uppercase tracking-[0.2em] px-1 font-bold">Receiver Details (WhatsApp Sync)</h3>
                     
                     <div className="grid grid-cols-1 gap-3">
@@ -863,12 +868,21 @@ export function CartDrawer() {
                   {isSubmitting ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
                   ) : (
-                    <>Checkout via WHATSAPP <ArrowRight className="w-4 h-4" /></>
+                    <>Checkout via UPI & WHATSAPP <ArrowRight className="w-4 h-4" /></>
                   )}
                 </motion.button>
               </div>
             </div>
           </motion.div>
+          <UpiPaymentModal
+            isOpen={isPaymentModalOpen}
+            onClose={() => setIsPaymentModalOpen(false)}
+            onSuccess={() => {
+              setIsPaymentModalOpen(false);
+              finalizeCheckout();
+            }}
+            amount={finalPrice}
+          />
         </>
       )}
     </AnimatePresence>
