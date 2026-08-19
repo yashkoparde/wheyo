@@ -23,6 +23,11 @@ interface CartContextType {
   totalPrice: number;
   isCartOpen: boolean;
   setIsCartOpen: (isOpen: boolean) => void;
+  tourStep: number | null;
+  setTourStep: (step: number | null) => void;
+  hasTourEnded: boolean;
+  endTour: () => void;
+  skipToLastStep: () => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -30,6 +35,28 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [tourStep, setTourStepState] = useState<number | null>(null);
+  const [hasTourEnded, setHasTourEnded] = useState(false);
+
+  const endTour = () => {
+    setHasTourEnded(true);
+    setTourStepState(null);
+  };
+
+  const skipToLastStep = () => {
+    // Jump to step 8 (Register & Order Now)
+    setTourStep(8);
+  };
+
+  const setTourStep = (step: number | null) => {
+    if (step !== null) {
+      // Re-enable tour if user explicitly requested step
+      setHasTourEnded(false);
+    } else {
+      setHasTourEnded(true);
+    }
+    setTourStepState(step);
+  };
 
   const addItem = (newItem: CartItem) => {
     setItems((prev) => {
@@ -74,6 +101,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
         totalPrice,
         isCartOpen,
         setIsCartOpen,
+        tourStep,
+        setTourStep,
+        hasTourEnded,
+        endTour,
+        skipToLastStep,
       }}
     >
       {children}
