@@ -57,9 +57,9 @@ export function IdentitySelector({ session, onSelect, onCancel, showCancelButton
   const profiles = [
     {
       id: 'student',
-      title: 'Student / Hosteler',
-      subtext: 'Mass Calories • Budget Fuel',
-      desc: 'Budget-friendly, high-yield mass calories, recovery fuel, and fast campus tiffins.',
+      title: 'Student',
+      subtext: 'High Calorie • Budget Friendly',
+      desc: 'Budget-friendly, high-calorie meals and campus recovery fuel.',
       icon: StudentIcon,
       accentColor: '#D4FF00',
       glowClass: 'group-hover:ring-[#D4FF00]/60 hover:shadow-[0_0_25px_rgba(212,255,0,0.25)]',
@@ -67,8 +67,8 @@ export function IdentitySelector({ session, onSelect, onCancel, showCancelButton
     {
       id: 'professional',
       title: 'Working Professional',
-      subtext: 'Premium Clean • Focus Energy',
-      desc: 'High convenience, premium focus-enhancing clean meals, energy and lean muscle maintenance.',
+      subtext: 'Clean Macros • Focus Energy',
+      desc: 'Clean, nutrient-dense meals for focus and lean muscle support.',
       icon: ProfessionalIcon,
       accentColor: '#FFFFFF',
       glowClass: 'group-hover:ring-white/60 hover:shadow-[0_0_25px_rgba(255,255,255,0.15)]',
@@ -76,8 +76,8 @@ export function IdentitySelector({ session, onSelect, onCancel, showCancelButton
     {
       id: 'elite',
       title: 'Elite Athlete',
-      subtext: 'Peak Macros • Max Protein',
-      desc: 'Gold-standard macros, absolute maximum lean protein density, and champion physical recovery.',
+      subtext: 'Max Protein • Performance',
+      desc: 'Peak macros and maximum protein density for training.',
       icon: AthleteIcon,
       accentColor: '#D4FF00',
       glowClass: 'group-hover:ring-[#D4FF00]/60 hover:shadow-[0_0_25px_rgba(212,255,0,0.25)]',
@@ -112,9 +112,6 @@ export function IdentitySelector({ session, onSelect, onCancel, showCancelButton
 
   return (
     <div className="fixed inset-0 bg-[#000000] z-[150] flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 select-none overflow-y-auto selection:bg-[#D4FF00] selection:text-black">
-      {/* Cinematic Film Grain Overlay */}
-      <div className="pointer-events-none fixed inset-0 z-50 h-full w-full opacity-[0.03] mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }} />
-
       {/* Cinematic Spotlight Backdrop */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[250px] sm:w-[500px] h-[250px] sm:h-[500px] bg-[#D4FF00]/5 rounded-full blur-[100px] pointer-events-none" />
 
@@ -124,16 +121,16 @@ export function IdentitySelector({ session, onSelect, onCancel, showCancelButton
           initial={{ opacity: 0, y: -15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="text-center mb-6 sm:mb-12 px-2"
+          className="text-center mb-6 sm:mb-10 px-2"
         >
-          <span className="text-red-600 font-mono text-[8px] sm:text-xs font-black uppercase tracking-[0.3em] mb-1 sm:mb-2 block">
-            WHEYO PROTIEN CLOUD KITCHEN
+          <span className="text-[#D4FF00] font-mono text-[9px] sm:text-xs font-black uppercase tracking-[0.25em] mb-1 sm:mb-2 block">
+            WHEYO PROTEIN KITCHEN
           </span>
           <h1 className="text-2xl sm:text-4xl md:text-5xl font-display font-black uppercase text-white tracking-wider leading-none">
-            Who is fueling today?
+            Choose Your Profile
           </h1>
-          <p className="text-zinc-500 font-mono text-[9px] sm:text-xs mt-2 max-w-lg mx-auto leading-relaxed">
-            Select your profile to automatically load customized menu selections, athletic pricing, and performance macros.
+          <p className="text-zinc-400 font-mono text-[10px] sm:text-xs mt-2 max-w-md mx-auto leading-relaxed">
+            Select your daily profile for tailored portions, macros, and prices.
           </p>
         </motion.div>
 
