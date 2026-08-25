@@ -1,34 +1,36 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, Filter, Loader2, ChefHat, Flame, BrainCircuit, LayoutGrid, ListFilter, Dumbbell, Sparkles, X, Crown, Trophy, Leaf, Zap, User, GraduationCap, Coffee } from 'lucide-react';
+import { Search, Filter, Loader2, ChefHat, Flame, BrainCircuit, LayoutGrid, ListFilter, Dumbbell, Sparkles, X, Crown, Trophy, Leaf, Zap, User, GraduationCap, Coffee, Calendar, Activity, ClipboardList, ShoppingBag, Utensils, ArrowRight, ArrowLeft, ChevronRight, Check } from 'lucide-react';
 import { MenuCard, MenuCardSkeleton, type MenuItem } from '../components/MenuCard';
 import { OrderModal } from '../components/OrderModal';
 import { NutritionModal } from '../components/NutritionModal';
 import { cn } from '../components/Layout';
 import { supabase, getPublicUrl } from '../lib/supabase';
+import { getCachedMenuProducts } from '../lib/preloadTourAssets';
 import type { Session } from '@supabase/supabase-js';
 import { useCart } from '../context/CartContext';
 import { IdentitySelector } from '../components/IdentitySelector';
+import { IntroSequence } from '../components/IntroSequence';
 
 const SEGMENT_DEFS = [
   {
     id: 'student',
     label: 'Student',
     icon: GraduationCap,
-    sub: 'Mass Calories',
+    sub: 'High Calorie',
   },
   {
     id: 'professional',
-    label: 'Professional',
+    label: 'Pro',
     icon: Coffee,
-    sub: 'Clean Focus',
+    sub: 'Clean Fuel',
   },
   {
     id: 'elite',
-    label: 'Elite Athlete',
+    label: 'Athlete',
     icon: Trophy,
-    sub: 'Peak Macros',
+    sub: 'High Protein',
   },
 ];
 
@@ -117,7 +119,50 @@ export default function MenuPage({ session }: { session: Session | null }) {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const { addItem } = useCart();
+  const [showIntro, setShowIntro] = useState(() => !sessionStorage.getItem('has_completed_intro'));
+  const [showIdentitySelector, setShowIdentitySelector] = useState(false);
+
+  const handleIntroComplete = async () => {
+    sessionStorage.setItem('has_completed_intro', 'true');
+    setShowIntro(false);
+
+    if (session?.user?.id) {
+      try {
+        const { data: profData } = await supabase
+          .from('profiles')
+          .select('user_segment')
+          .eq('id', session.user.id)
+          .single();
+        if (profData?.user_segment) {
+          localStorage.setItem('user_segment', profData.user_segment);
+          return;
+        }
+      } catch (e) {
+        console.warn('Error fetching profile segment on intro complete:', e);
+      }
+      
+      const localSeg = localStorage.getItem('user_segment');
+      if (!localSeg) {
+        setShowIdentitySelector(true);
+      }
+    } else {
+      setShowIdentitySelector(true);
+    }
+  };
+
+  useEffect(() => {
+    if (showIntro || showIdentitySelector) {
+      document.body.style.overflow = 'hidden';
+      window.scrollTo(0, 0);
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [showIntro, showIdentitySelector]);
+
+  const { addItem, setTourStep } = useCart();
 
   useEffect(() => {
     if (!localStorage.getItem('tutorial_seen')) {
@@ -200,9 +245,22 @@ export default function MenuPage({ session }: { session: Session | null }) {
     }
   };
 
+  // Immediate scroll-to-top anchor effect on segment or category filter change
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+  }, [userSegment, activeFilter]);
+
   const fetchProducts = async () => {
     try {
-      setLoading(true);
+      const cached = getCachedMenuProducts();
+      if (cached && cached.length > 0) {
+        setProducts(cached);
+        setLoading(false);
+      } else {
+        setLoading(true);
+      }
       setError(null);
       if (!supabase) {
         setProducts(FALLBACK_PRODUCTS);
@@ -334,10 +392,25 @@ export default function MenuPage({ session }: { session: Session | null }) {
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12 pb-28 md:pb-16 select-none">
+    <div className="relative min-h-screen bg-[#050505] overflow-x-hidden text-white font-sans selection:bg-[#D4FF00] selection:text-black">
+      <AnimatePresence mode="wait">
+        {showIntro && <IntroSequence onComplete={handleIntroComplete} />}
+      </AnimatePresence>
+
+      {showIdentitySelector && (
+        <IdentitySelector
+          session={session}
+          onSelect={(segmentId) => {
+            setShowIdentitySelector(false);
+          }}
+        />
+      )}
+
+      {/* Tutorial Overlay */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12 pb-28 md:pb-16 select-none">
       
       {/* Centered Premium Title Header */}
-      <div className="mb-6 sm:mb-8 text-center animate-fade-in">
+      <div className="mb-6 sm:mb-8 text-center animate-fade-in flex flex-col items-center">
         <motion.h1
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -346,14 +419,23 @@ export default function MenuPage({ session }: { session: Session | null }) {
         >
           Fuel <span className="bg-gradient-to-r from-[#D4FF00] to-[#A3FF00] bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(212,255,0,0.3)]">Station</span>
         </motion.h1>
-      </div>
 
+        {/* Elegant Button for Interactive Tour under Fuel Station */}
+        <button
+          type="button"
+          onClick={() => setTourStep(0)}
+          className="mt-3.5 inline-flex items-center px-4 py-2 bg-[#0A0A0C] hover:bg-[#D4FF00] text-zinc-300 hover:text-black border border-white/10 hover:border-[#D4FF00] rounded-xl font-mono text-[10px] sm:text-[11px] font-black uppercase tracking-widest transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.5)] hover:shadow-[0_0_20px_rgba(212,255,0,0.3)] hover:scale-105 active:scale-95 cursor-pointer"
+        >
+          Take a Tour
+        </button>
+      </div>
 
       {/* Controls: Premium Search Bar with Filter */}
       <div 
+        id="search-controls"
         className={cn(
           "mb-6 sm:mb-8 max-w-xl mx-auto transition-all",
-          tutorialStep === 0 && "relative z-[60] ring-4 ring-[#D4FF00] rounded-2xl bg-[#0D0D0D]"
+          tutorialStep === 1 && "relative z-[60] ring-4 ring-[#D4FF00] rounded-2xl bg-[#0D0D0D]"
         )}
       >
         <div className="bg-[#0D0D0D]/60 p-2 rounded-2xl border border-white/5 shadow-2xl backdrop-blur-md flex items-center gap-2">
@@ -384,7 +466,7 @@ export default function MenuPage({ session }: { session: Session | null }) {
       </div>
 
       {/* 3 Circular Identity selectors right below the search bar */}
-      <div className="max-w-md mx-auto mb-8 flex items-center justify-between px-6 sm:px-4">
+      <div id="identity-selectors" className="max-w-md mx-auto mb-8 flex items-center justify-between px-6 sm:px-4">
         {SEGMENT_DEFS.map((seg) => {
           const IconComponent = seg.icon;
           const isActive = userSegment === seg.id;
@@ -472,121 +554,55 @@ export default function MenuPage({ session }: { session: Session | null }) {
           <p className="text-red-400 font-display tracking-wide uppercase text-sm">{error}</p>
         </div>
       ) : (
-        <AnimatePresence mode="popLayout">
-          <motion.div 
-            id="food-items-deck"
-            className={cn(
-              "grid gap-3 sm:gap-6",
-              viewMode === 'list' 
-                ? "grid-cols-1 max-w-3xl mx-auto" 
-                : "grid-cols-2 md:grid-cols-2 lg:grid-cols-3"
-            )}
-            layout
-          >
-            {loading ? (
-              Array.from({ length: 4 }).map((_, index) => (
-                <motion.div
-                  key={`skeleton-${index}`}
-                  layout
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <MenuCardSkeleton mode={viewMode} />
-                </motion.div>
-              ))
-            ) : (
-              filteredItems.map((item, index) => (
-                <motion.div
-                  key={item.id}
-                  layout
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.25, delay: index * 0.03 }}
-                >
-                  <MenuCard 
-                    item={item} 
-                    mode={viewMode}
-                    onOrder={() => setSelectedItem(item)} 
-                    onAddDirect={(e) => handleAddDirect(item, e)}
-                    onInfo={(e) => { e.stopPropagation(); setSelectedItem(item); }}
-                    onSwipeLeft={() => handleDismissItem(item.id, item.name)}
-                    onSwipeRight={() => {
-                      addItem({
-                        id: item.id,
-                        code: item.code,
-                        name: item.name,
-                        price: item.price,
-                        protein: item.protein,
-                        quantity: 1,
-                        note: '',
-                        carbs: item.carbs,
-                        fats: item.fats,
-                        calories: item.calories,
-                        isVeg: item.isVeg,
-                      });
-                      setToastMessage(`Swiped "${item.name}" into Plate (+${item.protein}g P)!`);
-                      setTimeout(() => setToastMessage(null), 2800);
-                    }}
-                  />
-                </motion.div>
-              ))
-            )}
-          </motion.div>
-        </AnimatePresence>
+        <div 
+          id="food-items-deck"
+          className="grid gap-2.5 sm:gap-4 grid-cols-1 max-w-3xl mx-auto"
+        >
+          {loading ? (
+            Array.from({ length: 4 }).map((_, index) => (
+              <MenuCardSkeleton key={`skeleton-${index}`} mode="list" />
+            ))
+          ) : (
+            filteredItems.map((item) => (
+              <MenuCard 
+                key={item.id}
+                item={item} 
+                mode="list"
+                onOrder={() => setSelectedItem(item)} 
+                onAddDirect={(e) => handleAddDirect(item, e)}
+                onInfo={(e) => { e.stopPropagation(); setSelectedItem(item); }}
+              />
+            ))
+          )}
+        </div>
       )}
 
       {/* Empty State matches design discipline */}
       {filteredItems.length === 0 && !loading && !error && (
-        <div className="text-center py-20 flex flex-col items-center gap-4 bg-[#101010] rounded-2xl border border-white/5 p-8 max-w-xl mx-auto">
-          <div className="p-4 bg-white/5 rounded-full ring-4 ring-[#D4FF00]/5">
-            <BrainCircuit className="w-8 h-8 text-gray-500" />
+        <div className="text-center py-16 flex flex-col items-center gap-3 bg-[#0D0D10] rounded-2xl border border-white/5 p-6 max-w-md mx-auto">
+          <div className="p-3 bg-white/5 rounded-full">
+            <BrainCircuit className="w-6 h-6 text-gray-500" />
           </div>
-          <p className="text-gray-400 text-sm font-display tracking-widest uppercase">No macros found matching criteria.</p>
-          <div className="flex flex-wrap gap-4 items-center justify-center">
-            {dismissedItemIds.length > 0 && (
-              <button 
-                onClick={() => setDismissedItemIds([])}
-                className="bg-[#D4FF00]/10 border border-[#D4FF00]/20 text-[#D4FF00] px-4 py-2 rounded-xl font-mono text-xs uppercase tracking-wider hover:bg-[#D4FF00]/20 transition-all active:scale-95 cursor-pointer"
-              >
-                Restore Hidden Meals ({dismissedItemIds.length})
-              </button>
-            )}
-            <button 
-              onClick={() => { setActiveFilter('All Meals'); setSearchQuery(''); }}
-              className="text-[#D4FF00] font-mono text-xs uppercase hover:underline underline-offset-4"
-            >
-              Reset Filters
-            </button>
-          </div>
+          <p className="text-gray-400 text-xs font-mono uppercase">No meals found matching criteria.</p>
+          <button 
+            onClick={() => { setActiveFilter('All Meals'); setSearchQuery(''); }}
+            className="text-[#D4FF00] font-mono text-xs uppercase font-bold hover:underline"
+          >
+            Reset Filters
+          </button>
         </div>
       )}
 
-      {/* Change Athletic Identity Button at the end of MenuPage */}
-      <div className="mt-20 mb-10 flex flex-col items-center justify-center border-t border-white/5 pt-8">
-        <p className="text-zinc-600 font-mono text-[10px] uppercase tracking-widest mb-3">
-          CURRENT ATHLETIC FEED: <span className="text-[#D4FF00]">{userSegment === 'student' ? 'Student / Hosteler' : userSegment === 'professional' ? 'Working Professional' : 'Elite Athlete'}</span>
-        </p>
-        <div className="flex flex-col items-center gap-3">
-          <button
-            onClick={() => {
-              setShowIdentityModal(true);
-            }}
-            className="px-6 py-3 bg-[#0A0A0C] hover:bg-zinc-900 text-zinc-400 hover:text-[#D4FF00] border border-white/10 rounded-2xl font-mono text-[11px] font-black uppercase tracking-wider transition-all duration-300 shadow-[0_4px_24px_rgba(0,0,0,0.6)] flex items-center gap-2 cursor-pointer"
-          >
-            <User className="w-4.5 h-4.5 text-zinc-500 group-hover:text-[#D4FF00]" /> CHANGE ATHLETIC IDENTITY
-          </button>
-          {dismissedItemIds.length > 0 && (
-            <button
-              onClick={() => setDismissedItemIds([])}
-              className="text-[10px] font-mono uppercase text-zinc-500 hover:text-white transition-colors cursor-pointer tracking-wider"
-            >
-              RESTORE {dismissedItemIds.length} HIDDEN MEAL{dismissedItemIds.length > 1 ? 'S' : ''}
-            </button>
-          )}
-        </div>
+      {/* Change Athletic Identity Pill at the end of MenuPage */}
+      <div className="mt-12 mb-6 flex flex-col items-center justify-center border-t border-white/5 pt-6">
+        <button
+          onClick={() => setShowIdentityModal(true)}
+          className="px-4 py-2 bg-[#0E0E12] hover:bg-zinc-900 text-zinc-300 hover:text-[#D4FF00] border border-white/10 rounded-xl font-mono text-[11px] font-bold uppercase tracking-wider transition-colors flex items-center gap-2 cursor-pointer shadow-sm active:scale-95"
+        >
+          <User className="w-3.5 h-3.5 text-[#D4FF00]" />
+          <span>Profile: <strong className="text-white">{userSegment === 'student' ? 'Student' : userSegment === 'professional' ? 'Professional' : 'Athlete'}</strong></span>
+          <span className="text-[#D4FF00] text-[10px] ml-1 font-black">Change</span>
+        </button>
       </div>
 
       {showIdentityModal && (
@@ -638,80 +654,7 @@ export default function MenuPage({ session }: { session: Session | null }) {
 
       <OrderModal item={selectedItem} onClose={() => setSelectedItem(null)} session={session} />
       <NutritionModal item={infoItem} onClose={() => setInfoItem(null)} />
-
-      {/* Gamified Tutorial Overlay */}
-      <AnimatePresence>
-        {tutorialStep >= 0 && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
-              onClick={completeTutorial}
-            />
-            
-            <motion.div
-              initial={{ opacity: 0, y: 30, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 30, scale: 0.9 }}
-              className={cn(
-                "relative z-[70] bg-[#141414] border border-[#D4FF00]/30 shadow-[0_0_40px_rgba(212,255,0,0.2)] rounded-3xl p-6 md:p-8 max-w-sm w-full text-center overflow-hidden",
-                tutorialStep === 0 ? "mt-[-20vh]" : "mt-[30vh]"
-              )}
-            >
-              {/* Highlight Glow Accent */}
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#D4FF00] to-transparent" />
-              
-              <div className="w-12 h-12 bg-[#D4FF00]/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-[#D4FF00]/20">
-                {tutorialStep === 0 && <Search className="w-6 h-6 text-[#D4FF00]" />}
-                {tutorialStep === 1 && <Sparkles className="w-6 h-6 text-[#D4FF00]" />}
-              </div>
-              
-              <h3 className="text-[#D4FF00] font-display uppercase tracking-widest text-lg mb-2">
-                {tutorialStep === 0 ? 'Find Your Fuel' : 'Lightning Order'}
-              </h3>
-              
-              <div className="text-gray-300 font-mono text-sm leading-relaxed mb-8 flex flex-col gap-2">
-                {tutorialStep === 0 ? (
-                  <>
-                    <p>Search for any meal or click the <Filter className="inline w-3.5 h-3.5 mx-1" /> icon to reveal category tags.</p>
-                  </>
-                ) : (
-                  <>
-                    <p>Ordering is seamless. Hit <span className="font-bold text-white">+</span> to quick-add, or tap the card for details.</p>
-                    <p className="text-[#D4FF00]/70 text-xs mt-2">No forced sign-ups required. Fuel up instantly!</p>
-                  </>
-                )}
-              </div>
-              
-              <div className="flex gap-3">
-                {tutorialStep === 0 ? (
-                  <button 
-                    onClick={() => setTutorialStep(1)}
-                    className="flex-1 bg-[#D4FF00] text-black font-extrabold uppercase py-3 rounded-xl hover:bg-[#B8E600] active:scale-95 transition-all text-sm tracking-wider"
-                  >
-                    Got It, Next
-                  </button>
-                ) : (
-                  <button 
-                    onClick={completeTutorial}
-                    className="flex-1 bg-[#D4FF00] text-black font-extrabold uppercase py-3 rounded-xl hover:bg-[#B8E600] active:scale-95 transition-all text-sm tracking-wider shadow-[0_0_15px_rgba(212,255,0,0.4)]"
-                  >
-                    Start Fueling
-                  </button>
-                )}
-                <button 
-                  onClick={completeTutorial}
-                  className="px-4 bg-[#222] text-gray-400 font-mono uppercase text-xs rounded-xl hover:bg-[#333] hover:text-white transition-all"
-                >
-                  Skip
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+      </div>
     </div>
   );
 }

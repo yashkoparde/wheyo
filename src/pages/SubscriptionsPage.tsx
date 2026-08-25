@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 import type { Session } from '@supabase/supabase-js';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../components/Layout';
+import { UpiPaymentModal } from '../components/UpiPaymentModal';
 
 // High Polish Premium Icons
 const PremiumCrownIcon = () => (
@@ -22,6 +23,13 @@ const SubscriptionBadgeIcon = () => (
     <path d="M12 7V12L15 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
     <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
     <circle cx="12" cy="12" r="3" fill="#D4FF00" className="animate-pulse" />
+  </svg>
+);
+
+const ArrowLeftIcon = ({ className }: { className?: string }) => (
+  <svg className={cn("w-4 h-4 text-[#D4FF00]", className)} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="19" y1="12" x2="5" y2="12" />
+    <polyline points="12 19 5 12 12 5" />
   </svg>
 );
 
@@ -176,9 +184,11 @@ export default function SubscriptionsPage({ session }: SubscriptionsPageProps) {
   const [syncing, setSyncing] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
 
   // States for user subscription configuration
   const [selectedPlanId, setSelectedPlanId] = useState<string>('');
+  const [activeDetailPlanId, setActiveDetailPlanId] = useState<string | null>(null);
   const [selectedAddonIds, setSelectedAddonIds] = useState<string[]>([]);
   const [selectedDropLocation, setSelectedDropLocation] = useState<string>('GIT Main Gate');
   const [billingCycle, setBillingCycle] = useState<'weekly' | 'monthly'>('weekly');
@@ -426,7 +436,7 @@ export default function SubscriptionsPage({ session }: SubscriptionsPageProps) {
   };
 
   // Run Direct Checkout Contract creation on Supabase
-  const handleCheckoutContract = async () => {
+  const handleCheckoutContract = () => {
     if (!user) {
       setErrorMessage("Please sign in first to deploy your customized autopilot plan.");
       setTimeout(() => setErrorMessage(null), 4000);
@@ -438,9 +448,13 @@ export default function SubscriptionsPage({ session }: SubscriptionsPageProps) {
       return;
     }
 
-    setLoading(true);
     setErrorMessage(null);
     setSuccessMessage(null);
+    setIsPaymentModalOpen(true);
+  };
+
+  const finalizeSubscription = async () => {
+    setLoading(true);
 
     const deliveryDate = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN', {
       weekday: 'long',
@@ -642,332 +656,309 @@ export default function SubscriptionsPage({ session }: SubscriptionsPageProps) {
         )}
 
         {/* PRIMARY PLANS VISUALIZER */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div id="tour-subscription-plans" className="space-y-6">
           
-          {/* LEFT COLUMN: THE SUBSCRIPTION PLANS LISTED FROM SUPABASE */}
-          <section className="lg:col-span-7 space-y-6">
-            <div className="flex items-center">
-              <h2 className="text-xs font-mono font-black text-white uppercase tracking-widest">
-                STEP 1: SELECT YOUR AUTOPILOT BASE PLAN
-              </h2>
+          {loading ? (
+            <div className="py-12 border border-white/[0.04] rounded-2xl bg-[#0C0C0E] text-center space-y-3 animate-pulse">
+              <div className="w-8 h-8 rounded-full border-2 border-dashed border-[#D4FF00] animate-spin mx-auto" />
+              <p className="text-xs font-mono uppercase text-gray-400">Loading live athletic blueprints from metadata tables...</p>
             </div>
-
-            {loading ? (
-              <div className="py-12 border border-white/[0.04] rounded-2xl bg-[#0C0C0E] text-center space-y-3 animate-pulse">
-                <div className="w-8 h-8 rounded-full border-2 border-dashed border-[#D4FF00] animate-spin mx-auto" />
-                <p className="text-xs font-mono uppercase text-gray-400">Loading live athletic blueprints from metadata tables...</p>
+          ) : !hasLoadedAnyPlans ? (
+            // EXTREME EMPTY NOTIFICATION WARNING - PREVENT MOCKS FALLBACK
+            <div id="no-plans-notice" className="p-8 border-2 border-dashed border-red-500/30 rounded-2xl bg-red-500/[0.01] space-y-5 text-center">
+              <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center mx-auto text-red-400 text-lg font-mono font-bold">
+                !
               </div>
-            ) : !hasLoadedAnyPlans ? (
-              // EXTREME EMPTY NOTIFICATION WARNING - PREVENT MOCKS FALLBACK
-              <div id="no-plans-notice" className="p-8 border-2 border-dashed border-red-500/30 rounded-2xl bg-red-500/[0.01] space-y-5 text-center">
-                <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center mx-auto text-red-400 text-lg font-mono font-bold">
-                  !
-                </div>
-                <div className="space-y-2">
-                  <h3 className="text-white font-extrabold uppercase text-sm tracking-wide">NO LIVE SUBSCRIPTION PLANS FOUND IN DATABASE</h3>
-                  <p className="text-xs text-gray-400 max-w-lg mx-auto">
-                    In compliance with direct instructions, hardcoded local fallback plans are completely disabled. Live plans must be queried from the <code className="text-[#D4FF00]">subscription_plans</code> table.
-                  </p>
-                </div>
-
-                <div className="pt-2">
-                  <button 
-                    onClick={handleSyncBlueprintsToDatabase}
-                    disabled={syncing}
-                    className="px-6 py-3 bg-[#D4FF00] hover:bg-white text-black font-mono text-xs font-black uppercase rounded-xl transition-colors tracking-wide inline-flex items-center gap-2 shadow-lg"
-                  >
-                    {syncing ? (
-                      <>
-                        <span className="w-3 h-3 rounded-full border-2 border-black border-dashed animate-spin" />
-                        Seeding Supabase Tables...
-                      </>
-                    ) : (
-                      "Instant Live Sync database Blueprints"
-                    )}
-                  </button>
-                  <p className="text-[10px] text-gray-500 mt-2 uppercase font-mono">Seeds 5 plans & 5 custom boosters directly into Supabase instantly</p>
-                </div>
+              <div className="space-y-2">
+                <h3 className="text-white font-extrabold uppercase text-sm tracking-wide">NO LIVE SUBSCRIPTION PLANS FOUND IN DATABASE</h3>
+                <p className="text-xs text-gray-400 max-w-lg mx-auto">
+                  In compliance with direct instructions, hardcoded local fallback plans are completely disabled. Live plans must be queried from the <code className="text-[#D4FF00]">subscription_plans</code> table.
+                </p>
               </div>
-            ) : (
-              <div className="space-y-4">
+
+              <div className="pt-2">
+                <button 
+                  onClick={handleSyncBlueprintsToDatabase}
+                  disabled={syncing}
+                  className="px-6 py-3 bg-[#D4FF00] hover:bg-white text-black font-mono text-xs font-black uppercase rounded-xl transition-colors tracking-wide inline-flex items-center gap-2 shadow-lg"
+                >
+                  {syncing ? (
+                    <>
+                      <span className="w-3 h-3 rounded-full border-2 border-black border-dashed animate-spin" />
+                      Seeding Supabase Tables...
+                    </>
+                  ) : (
+                    "Instant Live Sync database Blueprints"
+                  )}
+                </button>
+                <p className="text-[10px] text-gray-500 mt-2 uppercase font-mono">Seeds 5 plans & 5 custom boosters directly into Supabase instantly</p>
+              </div>
+            </div>
+          ) : activeDetailPlanId === null ? (
+            /* CONDENSED RECTANGLE CARDS LIST - LOW COGNITIVE EFFORT INITIAL VIEW */
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xs font-mono font-black text-white uppercase tracking-widest">
+                  SELECT YOUR AUTOPILOT BASE PLAN
+                </h2>
+                <span className="text-[10px] font-mono text-gray-500 uppercase">
+                  TAP ANY RECTANGLE TO CONFIGURE
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                 {dbPlans.map((plan) => {
                   const isSelected = selectedPlanId === plan.id;
-                  
+                  const firstItems = plan.inclusions && plan.inclusions.length > 0 
+                    ? plan.inclusions.slice(0, 2).join(' • ') 
+                    : 'Custom Macro Fuel';
+
                   return (
                     <div 
                       key={plan.id}
-                      onClick={() => setSelectedPlanId(isSelected ? '' : plan.id)}
+                      onClick={() => {
+                        setSelectedPlanId(plan.id);
+                        setActiveDetailPlanId(plan.id);
+                        window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+                      }}
                       className={cn(
-                        "cursor-pointer rounded-2xl bg-[#0C0C0E] border p-6 relative overflow-hidden transition-all duration-300 group select-none flex flex-col justify-between",
+                        "cursor-pointer rounded-2xl bg-[#0C0C0E] border p-4 sm:p-5 relative overflow-hidden transition-all duration-200 group select-none flex flex-col justify-between hover:border-[#D4FF00] active:scale-[0.99] shadow-md",
                         plan.is_popular 
-                          ? "border-[#D4FF00] bg-[#D4FF00]/[0.01] shadow-[0_0_35px_rgba(212,255,0,0.08)] scale-[1.01]" 
+                          ? "border-[#D4FF00]/80 bg-[#D4FF00]/[0.02]" 
                           : isSelected
-                            ? "border-[#D4FF00]/60 bg-white/[0.01]"
-                            : "border-white/[0.03] hover:border-white/10 hover:bg-white/[0.01]"
+                            ? "border-[#D4FF00]/60 bg-white/[0.02]"
+                            : "border-white/10 hover:bg-white/[0.01]"
                       )}
                     >
                       {plan.is_popular && (
-                        <div className="absolute top-0 right-0 bg-[#D4FF00] text-black font-sans font-black text-[9px] uppercase px-4 py-1.5 tracking-wider rounded-bl-xl shadow-md">
-                          POPULAR CHOICE
+                        <div className="absolute top-0 right-0 bg-[#D4FF00] text-black font-mono font-black text-[8px] uppercase px-3 py-1 tracking-wider rounded-bl-xl shadow-md">
+                          POPULAR
                         </div>
                       )}
 
-                      <div className="space-y-4">
-                        <div className="flex justify-between items-start gap-4">
-                          <div className="space-y-1">
-                            <h3 className="text-white text-lg font-extrabold uppercase tracking-tight group-hover:text-[#D4FF00] transition-colors">
-                              {plan.name}
-                            </h3>
-                          </div>
-                          <div className="text-right flex-shrink-0 font-mono">
-                            <span className="text-2xl font-black text-white">
-                              ₹{Number(plan.price).toLocaleString()}
-                            </span>
-                            <span className="text-[10px] text-gray-500 block uppercase">/ {plan.billing_cycle}</span>
-                          </div>
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-baseline gap-2 pr-12">
+                          <h3 className="text-white text-sm sm:text-base font-extrabold uppercase tracking-tight group-hover:text-[#D4FF00] transition-colors">
+                            {plan.name}
+                          </h3>
                         </div>
 
-                        <p className="text-xs text-gray-400 font-sans leading-relaxed">
-                          {plan.description}
+                        <p className="text-[11px] text-gray-400 font-mono line-clamp-1">
+                          {firstItems}
                         </p>
-
-                        <div className="border-y border-white/[0.03] py-3.5 space-y-2">
-                          <span className="text-[9px] font-mono text-gray-500 uppercase block tracking-wider font-extrabold">Inclusions:</span>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                            {plan.inclusions?.map((inc, index) => (
-                              <div key={index} className="flex items-center gap-2.5 text-xs text-gray-300">
-                                <CheckIcon className="w-3.5 h-3.5 text-[#D4FF00] flex-shrink-0" />
-                                <span className="truncate">{inc}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
                       </div>
 
-                      <div className="mt-4 flex items-center justify-between text-xs font-mono">
-                        <span className={cn(
-                          "uppercase font-bold tracking-wider text-[11px]",
-                          isSelected ? "text-[#D4FF00]" : "text-gray-500"
-                        )}>
-                          {isSelected ? "[ PRIMARY SELECTION ACTIVE ]" : "TAP TO SELECT PLAN"}
-                        </span>
-                        <div className={cn(
-                          "w-5 h-5 rounded-full border flex items-center justify-center transition-all",
-                          isSelected ? "border-[#D4FF00] bg-[#D4FF00] text-black" : "border-white/10 group-hover:border-white/25"
-                        )}>
-                          {isSelected && <CheckIcon className="w-3.5 h-3.5 text-black" />}
+                      <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between">
+                        <div className="font-mono">
+                          <span className="text-base sm:text-lg font-black text-[#D4FF00]">
+                            ₹{Number(plan.price).toLocaleString()}
+                          </span>
+                          <span className="text-[9px] text-gray-500 uppercase ml-1">/ {plan.billing_cycle}</span>
+                        </div>
+
+                        <div className="px-3 py-1.5 bg-[#D4FF00] group-hover:bg-white text-black font-mono text-[10px] font-black uppercase rounded-xl transition-all flex items-center gap-1">
+                          <span>CONFIGURE</span>
+                          <span>→</span>
                         </div>
                       </div>
-
                     </div>
                   );
                 })}
               </div>
-            )}
-          </section>
-
-          {/* RIGHT COLUMN: RECURRING BOOSTER ADD-ONS + REALTIME CHECKOUT */}
-          <section className="lg:col-span-5 space-y-6">
-            
-            {/* BOOSTER ADDONS PANEL */}
-            <div className="border border-white/[0.04] bg-[#0C0C0E] rounded-2xl p-6 space-y-5 shadow-xl">
-              
-              <div className="space-y-1 pb-3 border-b border-white/[0.04]">
-                <h2 className="text-xs font-mono font-black text-white uppercase tracking-widest">
-                  STEP 2: ADD BOOSTERS
-                </h2>
-              </div>
-
-              {!hasLoadedAnyPlans ? (
-                <div className="py-6 text-center border border-white/[0.02] bg-white/[0.01] rounded-xl">
-                  <p className="text-xs font-mono text-gray-500 uppercase">Synchronize database blueprints to discover boosters</p>
-                </div>
-              ) : (
-                <div className="space-y-3 divide-y divide-white/[0.02]">
-                  {dbAddons.map((addon) => {
-                    const isChecked = selectedAddonIds.includes(addon.id);
-                    const discountPercentage = addon.reg_price > addon.price 
-                      ? Math.round(((addon.reg_price - addon.price) / addon.reg_price) * 100) 
-                      : 0;
-
-                    return (
-                      <div 
-                        key={addon.id}
-                        onClick={() => handleToggleAddon(addon.id)}
-                        className="pt-3 first:pt-0 flex items-start justify-between gap-4 cursor-pointer select-none transition-all"
-                      >
-                        <div className="flex items-start gap-3 w-10/12">
-                          <div className={cn(
-                            "w-5 h-5 mt-0.5 rounded-lg border flex items-center justify-center transition-all flex-shrink-0",
-                            isChecked ? "border-[#D4FF00] bg-[#D4FF00] text-black" : "border-white/20 bg-[#070708]"
-                          )}>
-                            {isChecked && <CheckIcon className="w-3.5 h-3.5 text-black" />}
-                          </div>
-
-                          <div className="space-y-0.5">
-                            <span className="text-white text-xs font-extrabold uppercase tracking-tight block">
-                              {addon.name}
-                            </span>
-                            <span className="text-[10px] text-gray-500 block leading-tight">
-                              {addon.description}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="text-right flex-shrink-0 font-mono space-y-1">
-                          <div className="flex items-center gap-1.5 justify-end">
-                            {addon.reg_price > addon.price && (
-                              <span className="text-[10px] text-gray-500 line-through">
-                                ₹{addon.reg_price}
-                              </span>
-                            )}
-                            <span className="text-xs font-black text-[#D4FF00] text-right block">
-                              ₹{addon.price}
-                            </span>
-                          </div>
-                          {discountPercentage > 0 && (
-                            <span className="inline-block px-1.5 py-0.5 bg-[#D4FF00]/10 text-[#D4FF00] text-[8px] font-black uppercase rounded tracking-wider">
-                              Save {discountPercentage}%
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
             </div>
+          ) : (
+            /* SUBPAGE FULL CONFIGURATION VIEW (OPENED UPON CLICKING A PLAN RECTANGLE) */
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="space-y-6 bg-[#08080A] border border-white/10 rounded-3xl p-5 sm:p-8 shadow-2xl"
+            >
+              {/* SUBPAGE TOP NAVIGATION BAR */}
+              <div className="flex items-center justify-between pb-4 border-b border-white/10">
+                <button 
+                  onClick={() => {
+                    setActiveDetailPlanId(null);
+                    window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+                  }}
+                  className="flex items-center gap-2 px-3.5 py-2 bg-zinc-900 hover:bg-zinc-800 text-white font-mono text-xs font-bold uppercase rounded-xl border border-white/10 transition-all cursor-pointer active:scale-95"
+                >
+                  <ArrowLeftIcon />
+                  <span>← ALL BLUEPRINTS</span>
+                </button>
 
-            {/* CHECKOUT SUMMARY PANEL */}
-            <div className="border border-white/[0.04] bg-[#0C0C0E] rounded-2xl p-6 space-y-5 shadow-xl relative overflow-hidden">
-              
-              <div className="space-y-1 pb-3 border-b border-white/[0.04]">
-                <h2 className="text-xs font-mono font-black text-white uppercase tracking-widest">
-                  STEP 3: CONFIG DROP & RECURRENCE
-                </h2>
-              </div>
-
-              {/* RENEWAL INTERVAL SELECTOR */}
-              <div className="space-y-2">
-                <span className="text-[10px] font-mono text-gray-400 uppercase tracking-wider block font-bold">Billing Recurrence</span>
-                <div className="grid grid-cols-2 gap-2 p-1 bg-[#070708] rounded-xl border border-white/[0.03]">
-                  <button 
-                    onClick={() => setBillingCycle('weekly')}
-                    className={cn(
-                      "py-2 text-xs font-mono uppercase rounded-lg transition-colors text-center font-black",
-                      billingCycle === 'weekly' ? "bg-white/5 text-white border border-white/10" : "text-gray-500"
-                    )}
-                  >
-                    Weekly
-                  </button>
-                  <button 
-                    onClick={() => setBillingCycle('monthly')}
-                    className={cn(
-                      "py-2 text-xs font-mono uppercase rounded-lg transition-colors text-center relative font-black",
-                      billingCycle === 'monthly' ? "bg-[#D4FF00]/10 text-[#D4FF00] border border-[#D4FF00]/20" : "text-gray-500"
-                    )}
-                  >
-                    Monthly <span className="text-[7.5px] px-1 bg-[#D4FF00] text-black rounded font-black absolute -top-1 -right-1">SAVE 12%</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* DROP LOCATION SELECTOR */}
-              <div className="space-y-2">
-                <span className="text-[10px] font-mono text-gray-400 uppercase tracking-wider block font-bold">Drop Location</span>
-                <div className="relative">
-                  <select 
-                    value={selectedDropLocation}
-                    onChange={(e) => setSelectedDropLocation(e.target.value)}
-                    className="w-full bg-[#070708] text-white border border-white/[0.04] p-3 text-xs font-mono outline-none rounded-xl focus:border-[#D4FF00] transition-colors appearance-none cursor-pointer"
-                  >
-                    {dropLocations.map((loc, idx) => (
-                      <option key={idx} value={loc}>{loc}</option>
-                    ))}
-                  </select>
-                  <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none text-gray-400">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-
-              {/* REALTIME CALCULATION SUMMARY */}
-              <div className="bg-zinc-950 p-4 rounded-xl border border-white/[0.04] space-y-3 font-mono text-xs">
-                <div className="flex justify-between text-gray-400">
-                  <span>Base Plan Level ({currentSelectedPlan?.name || "None Specified"})</span>
-                  <span className="text-white font-extrabold text-right">
-                    ₹{currentSelectedPlan 
-                      ? (billingCycle === 'monthly' ? Math.round(currentSelectedPlan.price * 4 * 0.88).toLocaleString() : currentSelectedPlan.price.toLocaleString())
-                      : "0.00"
-                    }
+                <div className="text-right">
+                  <span className="text-[10px] font-mono text-[#D4FF00] uppercase tracking-widest font-black block">
+                    PLAN SUBPAGE CONFIGURATOR
                   </span>
                 </div>
-                
-                {selectedAddonIds.length > 0 && (
-                  <div className="flex justify-between text-gray-400">
-                    <span>Performance Boosters x{selectedAddonIds.length}</span>
-                    <span className="text-[#D4FF00] font-black text-right">
-                      +₹{dbAddons
-                        .filter(a => selectedAddonIds.includes(a.id))
-                        .reduce((sum, current) => {
-                          let p = current.price;
-                          if (billingCycle === 'monthly') p = Math.round(p * 4 * 0.88);
-                          return sum + p;
-                        }, 0)
-                        .toLocaleString()
-                      }
-                    </span>
-                  </div>
-                )}
-
-                <div className="border-t border-white/[0.05] pt-3 flex justify-between items-baseline">
-                  <span className="text-xs uppercase text-[#D4FF00] font-black tracking-wider">TOTAL SUB:</span>
-                  <div className="text-right">
-                    <span className="text-2xl font-black text-[#D4FF00] tracking-tighter">
-                      ₹{calculatedSubtotal.toLocaleString()}
-                    </span>
-                    <span className="text-[10px] text-gray-500 uppercase block">/ {billingCycle}</span>
-                  </div>
-                </div>
               </div>
 
-              {/* ACTION: COMPOSE CONTRACT */}
-              <button 
-                onClick={handleCheckoutContract}
-                disabled={loading || !currentSelectedPlan}
-                className={cn(
-                  "w-full py-4 rounded-xl font-mono text-black font-black uppercase text-xs tracking-widest transition-all duration-300 flex items-center justify-center gap-2",
-                  (loading || !currentSelectedPlan) 
-                    ? "bg-[#D4FF00]/40 cursor-not-allowed" 
-                    : "bg-[#D4FF00] hover:bg-[#c3ec00] shadow-[0_4px_30px_rgba(212,255,0,0.15)] active:scale-[0.98]"
-                )}
-              >
-                {!currentSelectedPlan ? "SELECT BASE PLAN TO UNLOCK" : loading ? "CONFIGURING CYCLES..." : "SUBSCRIBE NOW"}
-              </button>
+              {/* TWO COLUMN GRID FOR SUBPAGE: PLAN DETAILS ON LEFT, ADDONS & CHECKOUT ON RIGHT */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                
+                {/* SELECTED PLAN EXPANDED DETAILS */}
+                <div className="lg:col-span-6 space-y-5 bg-[#0C0C0E] border border-white/10 rounded-2xl p-6">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-white text-xl font-extrabold uppercase tracking-tight text-[#D4FF00]">
+                        {currentSelectedPlan?.name || "Selected Blueprint"}
+                      </h3>
+                      {currentSelectedPlan?.is_popular && (
+                        <span className="bg-[#D4FF00] text-black font-mono font-black text-[9px] uppercase px-2.5 py-0.5 rounded-md">
+                          POPULAR
+                        </span>
+                      )}
+                    </div>
 
-              {user ? (
-                <div className="text-center text-[10px] font-mono text-gray-500 uppercase">
-                  ACTIVE ATHLETE ACCOUNT: {user.email?.split('@')[0]}
+                    <p className="text-xs text-gray-300 font-sans leading-relaxed">
+                      {currentSelectedPlan?.description}
+                    </p>
+                  </div>
+
+                  <div className="border-t border-white/10 pt-4 space-y-3">
+                    <span className="text-[10px] font-mono text-gray-400 uppercase tracking-wider block font-black">
+                      COMPLETE BLUEPRINT INCLUSIONS:
+                    </span>
+                    <div className="space-y-2">
+                      {currentSelectedPlan?.inclusions?.map((inc, index) => (
+                        <div key={index} className="flex items-center gap-3 p-2.5 bg-zinc-950 rounded-xl border border-white/5 text-xs text-gray-200 font-mono">
+                          <CheckIcon className="w-4 h-4 text-[#D4FF00] shrink-0" />
+                          <span>{inc}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="pt-2 text-xs font-mono text-gray-400 flex items-center justify-between">
+                    <span>Base Subscription Rate:</span>
+                    <span className="text-lg font-black text-white">
+                      ₹{Number(currentSelectedPlan?.price || 0).toLocaleString()} / {currentSelectedPlan?.billing_cycle}
+                    </span>
+                  </div>
                 </div>
-              ) : (
-                <div className="p-3 bg-amber-500/[0.02] border border-amber-500/10 rounded-xl text-center space-y-1.5">
-                  <p className="text-[10px] text-amber-500 font-mono uppercase tracking-wider">
-                    You are checking out in demo mode
-                  </p>
-                  <Link 
-                    to="/login"
-                    className="inline-block text-[10px] font-bold uppercase text-[#D4FF00] hover:underline"
-                  >
-                    SIGN IN TO ORDER →
-                  </Link>
+
+                {/* ADDONS + DROP CONFIGURATION + SUBSCRIBE CTA */}
+                <div className="lg:col-span-6 space-y-5">
+                  
+                  {/* BOOSTER ADDONS PANEL */}
+                  <div className="border border-white/10 bg-[#0C0C0E] rounded-2xl p-5 space-y-4">
+                    <h4 className="text-xs font-mono font-black text-white uppercase tracking-widest pb-2 border-b border-white/5">
+                      STEP 2: ADD PERFORMANCE BOOSTERS
+                    </h4>
+
+                    <div className="space-y-2.5">
+                      {dbAddons.map((addon) => {
+                        const isChecked = selectedAddonIds.includes(addon.id);
+
+                        return (
+                          <div 
+                            key={addon.id}
+                            onClick={() => handleToggleAddon(addon.id)}
+                            className={cn(
+                              "p-3 rounded-xl border flex items-center justify-between gap-3 cursor-pointer transition-all select-none",
+                              isChecked ? "border-[#D4FF00] bg-[#D4FF00]/10" : "border-white/5 bg-[#070708] hover:border-white/20"
+                            )}
+                          >
+                            <div className="flex items-center gap-3 min-w-0">
+                              <div className={cn(
+                                "w-4 h-4 rounded-md border flex items-center justify-center shrink-0",
+                                isChecked ? "border-[#D4FF00] bg-[#D4FF00] text-black" : "border-white/20"
+                              )}>
+                                {isChecked && <CheckIcon className="w-3 h-3 text-black" />}
+                              </div>
+                              <span className="text-white text-xs font-bold uppercase truncate">
+                                {addon.name}
+                              </span>
+                            </div>
+
+                            <span className="text-xs font-mono font-black text-[#D4FF00] shrink-0">
+                              +₹{addon.price}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* DROP LOCATION & BILLING CYCLE */}
+                  <div className="border border-white/10 bg-[#0C0C0E] rounded-2xl p-5 space-y-4">
+                    <h4 className="text-xs font-mono font-black text-white uppercase tracking-widest pb-2 border-b border-white/5">
+                      STEP 3: CONFIG DROP & RECURRENCE
+                    </h4>
+
+                    {/* RENEWAL INTERVAL SELECTOR */}
+                    <div className="space-y-1.5">
+                      <span className="text-[10px] font-mono text-gray-400 uppercase font-bold block">Billing Cycle</span>
+                      <div className="grid grid-cols-2 gap-2 p-1 bg-[#070708] rounded-xl border border-white/5">
+                        <button 
+                          onClick={() => setBillingCycle('weekly')}
+                          className={cn(
+                            "py-2 text-xs font-mono uppercase rounded-lg transition-colors text-center font-black cursor-pointer",
+                            billingCycle === 'weekly' ? "bg-white/10 text-white border border-white/20" : "text-gray-500"
+                          )}
+                        >
+                          Weekly
+                        </button>
+                        <button 
+                          onClick={() => setBillingCycle('monthly')}
+                          className={cn(
+                            "py-2 text-xs font-mono uppercase rounded-lg transition-colors text-center relative font-black cursor-pointer",
+                            billingCycle === 'monthly' ? "bg-[#D4FF00]/10 text-[#D4FF00] border border-[#D4FF00]/20" : "text-gray-500"
+                          )}
+                        >
+                          Monthly <span className="text-[7px] px-1 bg-[#D4FF00] text-black rounded font-black">SAVE 12%</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* DROP LOCATION SELECTOR */}
+                    <div className="space-y-1.5">
+                      <span className="text-[10px] font-mono text-gray-400 uppercase font-bold block">Drop Location</span>
+                      <select 
+                        value={selectedDropLocation}
+                        onChange={(e) => setSelectedDropLocation(e.target.value)}
+                        className="w-full bg-[#070708] text-white border border-white/10 p-3 text-xs font-mono outline-none rounded-xl focus:border-[#D4FF00] transition-colors cursor-pointer"
+                      >
+                        {dropLocations.map((loc, idx) => (
+                          <option key={idx} value={loc}>{loc}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* TOTAL SUB SUMMARY & CTA */}
+                    <div className="bg-zinc-950 p-4 rounded-xl border border-white/10 space-y-3 font-mono text-xs">
+                      <div className="flex justify-between items-baseline">
+                        <span className="text-xs uppercase text-[#D4FF00] font-black">TOTAL RECURRING:</span>
+                        <div className="text-right">
+                          <span className="text-2xl font-black text-[#D4FF00]">
+                            ₹{calculatedSubtotal.toLocaleString()}
+                          </span>
+                          <span className="text-[10px] text-gray-500 uppercase block">/ {billingCycle}</span>
+                        </div>
+                      </div>
+
+                      <button 
+                        onClick={handleCheckoutContract}
+                        disabled={loading || !currentSelectedPlan}
+                        className={cn(
+                          "w-full py-4 rounded-xl font-mono text-black font-black uppercase text-xs tracking-widest transition-all duration-200 cursor-pointer shadow-lg",
+                          (loading || !currentSelectedPlan) 
+                            ? "bg-[#D4FF00]/40 cursor-not-allowed" 
+                            : "bg-[#D4FF00] hover:bg-white active:scale-95"
+                        )}
+                      >
+                        {loading ? "PROCESSING..." : "SUBSCRIBE NOW"}
+                      </button>
+                    </div>
+
+                  </div>
+
                 </div>
-              )}
 
-            </div>
-
-          </section>
+              </div>
+            </motion.div>
+          )}
 
         </div>
 
@@ -998,6 +989,15 @@ export default function SubscriptionsPage({ session }: SubscriptionsPageProps) {
 
       </main>
 
+      <UpiPaymentModal
+        isOpen={isPaymentModalOpen}
+        onClose={() => setIsPaymentModalOpen(false)}
+        onSuccess={() => {
+          setIsPaymentModalOpen(false);
+          finalizeSubscription();
+        }}
+        amount={calculatedSubtotal}
+      />
     </div>
   );
 }
