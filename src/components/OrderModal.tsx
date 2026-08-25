@@ -151,7 +151,7 @@ export function OrderModal({ item, onClose, session }: OrderModalProps) {
                     </h2>
                     <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
                       <span className={`inline-flex items-center px-2 py-0.5 rounded font-mono text-[9px] font-black uppercase leading-none border ${item.isVeg ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-red-500/10 border-red-500/20 text-red-400'}`}>
-                        {item.isVeg ? "VEG SOURCE" : "NON-VEG SOURCE"}
+                        {item.isVeg ? "Veg" : "Non-Veg"}
                       </span>
                       {item.tags?.map((tag) => (
                         <span key={tag} className="inline-flex items-center bg-white/5 border border-white/10 px-2 py-0.5 rounded font-mono text-[9px] font-bold text-gray-300 uppercase leading-none">
@@ -165,63 +165,63 @@ export function OrderModal({ item, onClose, session }: OrderModalProps) {
                   </div>
                 </div>
 
-                {/* 4-Column High-contrast Macro Breakdown Grid */}
+                {/* 4-Column Macro Breakdown Grid */}
                 <div className="grid grid-cols-4 gap-2 mb-4">
-                  <div className="flex flex-col items-center justify-center p-2.5 rounded-xl bg-[#D4FF00]/10 border border-[#D4FF00]/20 text-center">
-                    <span className="font-display font-black text-sm text-[#D4FF00]">{item.protein}G</span>
-                    <span className="font-mono text-[8px] uppercase text-zinc-400 tracking-wider font-extrabold mt-0.5">Protein</span>
+                  <div className="flex flex-col items-center justify-center p-2 rounded-xl bg-[#D4FF00]/10 border border-[#D4FF00]/20 text-center">
+                    <span className="font-display font-black text-sm text-[#D4FF00]">{item.protein}g</span>
+                    <span className="font-mono text-[8.5px] uppercase text-zinc-400 font-bold mt-0.5">Protein</span>
                   </div>
-                  <div className="flex flex-col items-center justify-center p-2.5 rounded-xl bg-orange-500/10 border border-orange-500/20 text-center">
+                  <div className="flex flex-col items-center justify-center p-2 rounded-xl bg-orange-500/10 border border-orange-500/20 text-center">
                     <span className="font-display font-black text-sm text-orange-400">{item.calories}</span>
-                    <span className="font-mono text-[8px] uppercase text-zinc-400 tracking-wider font-extrabold mt-0.5">Kcal</span>
+                    <span className="font-mono text-[8.5px] uppercase text-zinc-400 font-bold mt-0.5">Kcal</span>
                   </div>
-                  <div className="flex flex-col items-center justify-center p-2.5 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-center">
-                    <span className="font-display font-black text-sm text-indigo-400">{carbs}G</span>
-                    <span className="font-mono text-[8px] uppercase text-zinc-400 tracking-wider font-extrabold mt-0.5">Carbs</span>
+                  <div className="flex flex-col items-center justify-center p-2 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-center">
+                    <span className="font-display font-black text-sm text-indigo-400">{carbs}g</span>
+                    <span className="font-mono text-[8.5px] uppercase text-zinc-400 font-bold mt-0.5">Carbs</span>
                   </div>
-                  <div className="flex flex-col items-center justify-center p-2.5 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-center">
-                    <span className="font-display font-black text-sm text-yellow-400">{fats}G</span>
-                    <span className="font-mono text-[8px] uppercase text-zinc-400 tracking-wider font-extrabold mt-0.5">Fats</span>
+                  <div className="flex flex-col items-center justify-center p-2 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-center">
+                    <span className="font-display font-black text-sm text-yellow-400">{fats}g</span>
+                    <span className="font-mono text-[8.5px] uppercase text-zinc-400 font-bold mt-0.5">Fats</span>
                   </div>
                 </div>
 
                 {/* Macro Specs Block */}
-                <div className="mb-4 sm:mb-6 space-y-2 sm:space-y-3 bg-[#0D0D0E] p-3 sm:p-4 rounded-2xl border border-white/5">
+                <div className="mb-4 space-y-2 bg-[#0D0D0E] p-3 rounded-xl border border-white/5">
                   <div>
-                    <h4 className="text-[9px] font-mono text-gray-500 uppercase tracking-widest mb-1 font-bold">Protein Source</h4>
+                    <h4 className="text-[9px] font-mono text-gray-500 uppercase tracking-wider mb-0.5 font-bold">Protein Source</h4>
                     <p className="text-[#D4FF00] font-sans font-bold text-xs">
                       {item.proteinSource || getProteinSource(item.name)}
                     </p>
                   </div>
                   <div className="h-px bg-white/5" />
                   <div>
-                    <h4 className="text-[9px] font-mono text-gray-500 uppercase tracking-widest mb-1 font-bold">Detailed Ingredients</h4>
-                    <p className="text-gray-400 text-[10px] sm:text-xs leading-relaxed font-medium">
+                    <h4 className="text-[9px] font-mono text-gray-500 uppercase tracking-wider mb-0.5 font-bold">Ingredients</h4>
+                    <p className="text-gray-400 text-[10.5px] sm:text-xs leading-relaxed font-medium">
                       {item.ingredients || getIngredients(item.name)}
                     </p>
                   </div>
                 </div>
 
-                <div className="space-y-3 sm:space-y-4">
+                <div className="space-y-3">
                   {/* Selector Block */}
-                  <div className="flex items-center justify-between bg-[#121214] p-2 sm:p-3 rounded-2xl border border-white/5">
+                  <div className="flex items-center justify-between bg-[#121214] p-2 rounded-xl border border-white/5">
                     <span className="text-[10px] font-mono text-gray-400 uppercase tracking-wider font-bold ml-2">Quantity</span>
-                    <div className="flex items-center gap-3 bg-black/40 rounded-xl p-1">
+                    <div className="flex items-center gap-3 bg-black/40 rounded-lg p-1">
                       <button
                         onClick={() => setQuantity(Math.max(1, quantity - 1))}
                         disabled={quantity <= 1}
-                        className={`p-1.5 sm:p-2 rounded-lg transition-colors duration-200 ${quantity <= 1 ? 'opacity-20 cursor-not-allowed' : 'hover:bg-white/5 text-white active:scale-95'}`}
+                        className={`p-1.5 rounded transition-colors ${quantity <= 1 ? 'opacity-20 cursor-not-allowed' : 'hover:bg-white/5 text-white active:scale-95'}`}
                       >
-                        <Minus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                        <Minus className="w-3.5 h-3.5" />
                       </button>
-                      <span className="font-mono text-sm sm:text-base tracking-widest font-black text-white w-6 text-center">
+                      <span className="font-mono text-sm tracking-widest font-black text-white w-6 text-center">
                         {quantity}
                       </span>
                       <button
                         onClick={() => setQuantity(quantity + 1)}
-                        className="p-1.5 sm:p-2 hover:bg-white/5 rounded-lg text-white transition-colors duration-200 active:scale-95"
+                        className="p-1.5 hover:bg-white/5 rounded text-white transition-colors active:scale-95"
                       >
-                        <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                        <Plus className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   </div>
@@ -231,8 +231,8 @@ export function OrderModal({ item, onClose, session }: OrderModalProps) {
                     <textarea
                       value={note}
                       onChange={(e) => setNote(e.target.value)}
-                      placeholder="Special cooking instructions (e.g. Less oil...)"
-                      className="w-full bg-[#121214] border border-white/5 rounded-xl p-3 text-[10px] sm:text-xs text-white placeholder:text-gray-600 focus:outline-none focus:border-[#D4FF00]/25 transition-colors resize-none h-12 sm:h-16"
+                      placeholder="Special instructions (optional)"
+                      className="w-full bg-[#121214] border border-white/5 rounded-xl p-2.5 text-xs text-white placeholder:text-gray-600 focus:outline-none focus:border-[#D4FF00]/25 transition-colors resize-none h-12"
                     />
                   </div>
                 </div>
@@ -240,21 +240,21 @@ export function OrderModal({ item, onClose, session }: OrderModalProps) {
             </div>
 
             {/* Action Sheet buttons (Sticky at bottom) */}
-            <div className="shrink-0 p-4 sm:p-5 bg-gradient-to-t from-[#0A0A0C] via-[#0A0A0C] to-transparent pt-4 border-t border-white/5 mt-auto relative z-20">
+            <div className="shrink-0 p-4 bg-[#0A0A0C] border-t border-white/5 mt-auto relative z-20">
               <div className="flex flex-col gap-2">
                 <button
                   onClick={handleAddToCart}
-                  className="w-full bg-[#D4FF00] hover:bg-white text-black font-black py-3 sm:py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all duration-200 shadow-[0_4px_20px_rgba(212,255,0,0.15)] text-xs uppercase tracking-wider active:scale-[0.98]"
+                  className="w-full bg-[#D4FF00] hover:bg-white text-black font-black py-3 rounded-xl flex items-center justify-center gap-2 transition-colors text-xs uppercase tracking-wider active:scale-[0.98]"
                 >
                   <ShoppingCart className="w-4 h-4 text-black" />
                   Add to Cart
                 </button>
                 <button
                   onClick={handleProceedToOrder}
-                  className="w-full bg-[#121214] hover:bg-[#18181b] text-gray-300 font-bold py-3 sm:py-3.5 rounded-xl flex items-center justify-center gap-2 border border-white/5 transition-all text-xs uppercase tracking-wider active:scale-[0.98]"
+                  className="w-full bg-[#141417] hover:bg-[#1c1c20] text-gray-300 font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 border border-white/5 transition-colors text-xs uppercase tracking-wider active:scale-[0.98]"
                 >
-                  <MessageCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                  Proceed directly to checklist
+                  <MessageCircle className="w-3.5 h-3.5" />
+                  Go to Checkout
                 </button>
               </div>
             </div>

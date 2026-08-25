@@ -25,7 +25,7 @@ export default function LoginPage() {
   const [fullName, setFullName] = useState('');
   const [phoneCode, setPhoneCode] = useState('+91');
   const [phoneNum, setPhoneNum] = useState('');
-  const [isSignUp, setIsSignUp] = useState(location.state?.isSignUp ?? false);
+  const [isSignUp, setIsSignUp] = useState(location.state?.isSignUp ?? true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
@@ -214,6 +214,7 @@ export default function LoginPage() {
       
       {/* Simplistic, Highly Polished Centered Card */}
       <motion.div 
+        id="login-container"
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ type: 'spring', damping: 25, stiffness: 120 }}

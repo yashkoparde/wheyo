@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, Navigate } from 'react-router-dom';
 import { toPng } from 'html-to-image';
 import { jsPDF } from 'jspdf';
 import { 
@@ -139,7 +139,7 @@ export interface WheyoOffer {
 export default function ProfilePage({ session }: { session: Session | null }) {
   const user = session?.user ?? null;
   const navigate = useNavigate();
-  const { addItem, setIsCartOpen } = useCart();
+  const { addItem, setIsCartOpen, tourStep } = useCart();
   const isMobile = useBreakpointObserver(768);
 
   const renderDetailContentRef = useRef<((id: string | null) => React.ReactNode) | null>(null);
@@ -154,7 +154,7 @@ export default function ProfilePage({ session }: { session: Session | null }) {
   const [dailyCalories, setDailyCalories] = useState(0);
   const [historyData, setHistoryData] = useState<MacroData[]>([]);
   const [biomarkerHistory, setBiomarkerHistory] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(!!session?.user);
   const [favorites, setFavorites] = useState<any[]>([]);
   const [allProducts, setAllProducts] = useState<any[]>([]);
   
@@ -194,6 +194,13 @@ export default function ProfilePage({ session }: { session: Session | null }) {
   const [cnsStress, setCnsStress] = useState<string>(() => localStorage.getItem('cns_stress_level') || 'Normal');
   const [sorenessLevel, setSorenessLevel] = useState<string>(() => localStorage.getItem('soreness_level') || 'Fresh (Fully Ready)');
   const [activeTab, setActiveTab] = useState<string | null>(null);
+
+  // Auto-scroll to top whenever segment / activeTab changes or resets to hub
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+  }, [activeTab]);
   const [physicalLogSubTab, setPhysicalLogSubTab] = useState<'nutrition' | 'fitness' | 'recovery'>('nutrition');
   const [activeLogCircle, setActiveLogCircle] = useState<string | null>(null);
   const [isIdRevealed, setIsIdRevealed] = useState(false);
@@ -534,6 +541,19 @@ export default function ProfilePage({ session }: { session: Session | null }) {
     settings: false,
   });
 
+  useEffect(() => {
+    if (tourStep === 4) {
+      setActiveTab(null);
+      setExpandedSections({ overview: true, performance: false, recovery: false, biometrics: false, history: false, subscriptions: false, settings: false });
+    } else if (tourStep === 5) {
+      setActiveTab('meal_diary');
+      setExpandedSections({ overview: false, performance: true, recovery: false, biometrics: false, history: false, subscriptions: false, settings: false });
+    } else if (tourStep === 6) {
+      setActiveTab('supplement_stack');
+      setExpandedSections({ overview: false, performance: false, recovery: true, biometrics: false, history: false, subscriptions: false, settings: false });
+    }
+  }, [tourStep]);
+
   const toggleSection = (section: string) => {
     setExpandedSections(prev => {
       const isOpening = !prev[section];
@@ -711,8 +731,8 @@ export default function ProfilePage({ session }: { session: Session | null }) {
         }
       }
 
-      const localName = dbProfile?.full_name || user.user_metadata?.full_name || localStorage.getItem(`customer_name_${user.id}`) || localStorage.getItem('customer_name') || 'Beast Mode';
-      const localPhone = dbProfile?.phone || user.user_metadata?.phone || localStorage.getItem(`customer_phone_${user.id}`) || localStorage.getItem('customer_phone') || '+91 99999 99999';
+      const localName = dbProfile?.full_name || user.user_metadata?.full_name || localStorage.getItem(`customer_name_${user.id}`) || localStorage.getItem('customer_name') || user.email?.split('@')[0] || 'Athlete';
+      const localPhone = dbProfile?.phone || user.user_metadata?.phone || localStorage.getItem(`customer_phone_${user.id}`) || localStorage.getItem('customer_phone') || '';
       const localPGoal = dbProfile?.daily_protein_goal || Number(localStorage.getItem(`daily_protein_goal_${user.id}`)) || Number(localStorage.getItem('daily_protein_goal')) || 150;
       const localCGoal = dbProfile?.daily_calorie_goal || Number(localStorage.getItem(`daily_calorie_goal_${user.id}`)) || Number(localStorage.getItem('daily_calorie_goal')) || 2200;
       const localGoalTag = dbProfile?.fitness_goal || localStorage.getItem(`fitness_goal_selection_${user.id}`) || localStorage.getItem('fitness_goal_selection') || 'Muscle Gain';
@@ -731,6 +751,7 @@ export default function ProfilePage({ session }: { session: Session | null }) {
       setPassportGoal(localGoalTag);
       setPassportProtein(localPGoal);
       setPassportCalories(localCGoal);
+      setLoading(false);
 
       // If no db profile exists yet and supabase is working, let's create one automatically and silently
       if (!dbProfile && supabase) {
@@ -2197,7 +2218,21 @@ export default function ProfilePage({ session }: { session: Session | null }) {
 
   // Checked dynamic list of favorites linked to user preferences is managed reactively via favorites state hooks.
 
-  if (loading) {
+  // Auto-switch tabs when guided by tour steps
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+    if (tourStep === 5) {
+      setActiveTab('meal_diary');
+    } else if (tourStep === 6) {
+      setActiveTab('supplement_stack');
+    } else if (tourStep === 4) {
+      setActiveTab(null);
+    }
+  }, [tourStep]);
+
+  if (loading && user) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[70vh]">
         <Loader2 className="w-10 h-10 text-[#D4FF00] animate-spin mb-4" />
@@ -2206,125 +2241,11 @@ export default function ProfilePage({ session }: { session: Session | null }) {
     );
   }
 
-  // AUTH PANEL IF NOT LOGGED IN
+  // REDIRECT OR SHOW AUTH FORM IF NOT LOGGED IN AND NOT IN TOUR MODE
   if (!user) {
-    return (
-      <div className="max-w-md mx-auto px-4 py-16 sm:py-24 select-none min-h-[80vh] flex flex-col justify-center">
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-[#0A0A0C] border border-white/5 rounded-[28px] p-6 sm:p-8 shadow-2xl relative overflow-hidden"
-        >
-          <div className="text-center mb-8">
-            <h1 className="text-2xl font-display uppercase tracking-widest font-black text-white">
-              WHEYO <span className="text-[#D4FF00]">MEMBER</span> LOG
-            </h1>
-            <p className="text-[10px] text-gray-500 mt-1 uppercase tracking-wider font-mono">
-              Provide credentials to sync your meal history
-            </p>
-          </div>
-
-          <form onSubmit={handleAuthSubmit} className="space-y-4">
-            {isSignUp && (
-              <>
-                <div>
-                  <label className="block text-[9px] font-mono text-gray-500 uppercase tracking-wider mb-1 pl-1">BEAST NAME</label>
-                  <div className="relative">
-                    <User className="absolute left-3.5 top-3.5 w-4 h-4 text-gray-600" />
-                    <input
-                      type="text"
-                      required
-                      placeholder="e.g. Yash Koparde"
-                      value={authName}
-                      onChange={(e) => setAuthName(e.target.value)}
-                      className="w-full bg-[#121214] border border-white/5 rounded-xl py-3 pl-11 pr-4 text-xs font-medium text-white placeholder:text-gray-700 focus:outline-none"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-[9px] font-mono text-gray-500 uppercase tracking-wider mb-1 pl-1">MOBILE CONTACT</label>
-                  <div className="relative">
-                    <Phone className="absolute left-3.5 top-3.5 w-4 h-4 text-gray-600" />
-                    <input
-                      type="tel"
-                      required
-                      placeholder="e.g. 9876543210"
-                      value={authPhone}
-                      onChange={(e) => setAuthPhone(e.target.value)}
-                      className="w-full bg-[#121214] border border-white/5 rounded-xl py-3 pl-11 pr-4 text-xs font-medium text-white placeholder:text-gray-700 focus:outline-none"
-                    />
-                  </div>
-                </div>
-              </>
-            )}
-
-            <div>
-              <label className="block text-[9px] font-mono text-gray-500 uppercase tracking-wider mb-1 pl-1">EMAIL ADDRESS</label>
-              <div className="relative">
-                <Mail className="absolute left-3.5 top-3.5 w-4 h-4 text-gray-600" />
-                <input
-                  type="email"
-                  required
-                  placeholder="athlete@domain.com"
-                  value={authEmail}
-                  onChange={(e) => setAuthEmail(e.target.value)}
-                  className="w-full bg-[#121214] border border-white/5 rounded-xl py-3 pl-11 pr-4 text-xs font-medium text-white placeholder:text-gray-700 focus:outline-none"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-[9px] font-mono text-gray-500 uppercase tracking-wider mb-1 pl-1">SECURE ACCESS KEYS</label>
-              <div className="relative">
-                <Lock className="absolute left-3.5 top-3.5 w-4 h-4 text-gray-600" />
-                <input
-                  type="password"
-                  required
-                  placeholder="••••••••"
-                  value={authPassword}
-                  onChange={(e) => setAuthPassword(e.target.value)}
-                  className="w-full bg-[#121214] border border-white/5 rounded-xl py-3 pl-11 pr-4 text-xs font-medium text-white placeholder:text-gray-700 focus:outline-none"
-                />
-              </div>
-            </div>
-
-            {authError && (
-              <p className="text-[10px] text-red-500 font-mono text-center pt-2">
-                {authError}
-              </p>
-            )}
-
-            <button
-              type="submit"
-              disabled={authLoading}
-              className="w-full bg-[#D4FF00] hover:bg-white text-black font-black py-3.5 rounded-xl text-xs uppercase tracking-widest transition-all duration-200 mt-2 flex items-center justify-center gap-2 active:scale-95 cursor-pointer"
-            >
-              {authLoading ? (
-                <Loader2 className="w-4 h-4 animate-spin text-black" />
-              ) : (
-                <>
-                  <span>{isSignUp ? 'Generate Membership ID' : 'Validate Access Profile'}</span>
-                  <CheckCircle className="w-4 h-4" />
-                </>
-              )}
-            </button>
-          </form>
-
-          <div className="text-center mt-6 pt-4 border-t border-white/5">
-            <button
-              onClick={() => {
-                setIsSignUp(!isSignUp);
-                setAuthError(null);
-              }}
-              className="text-[10px] font-mono text-gray-400 hover:text-white uppercase tracking-wider underline underline-offset-4 cursor-pointer bg-transparent"
-            >
-              {isSignUp ? 'Sign In' : 'Sign Up'}
-            </button>
-          </div>
-        </motion.div>
-      </div>
-    );
+    if (tourStep === null) {
+      return <Navigate to="/login" replace />;
+    }
   }
 
   // METRICS FOR MAIN BOARD EXTRUSION
@@ -2346,6 +2267,7 @@ export default function ProfilePage({ session }: { session: Session | null }) {
 
   const renderHeaderInfoBox = () => (
     <motion.div
+      id="tour-protein-chart"
       initial={{ opacity: 0, scale: 0.98 }}
       animate={{ opacity: 1, scale: 1 }}
       className="bg-gradient-to-r from-[#0C0C0E] to-[#08080A] border border-white/5 rounded-[24px] p-6 relative overflow-hidden mb-6 text-left"
@@ -2528,7 +2450,7 @@ export default function ProfilePage({ session }: { session: Session | null }) {
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                     }}
                     className="flex flex-col items-center justify-center outline-none group cursor-pointer"
-                    id={`orb-selector-${orb.id}`}
+                    id={orb.id === 'meal_diary' ? 'tour-meal-diary' : orb.id === 'supplement_stack' ? 'tour-supplements' : `orb-selector-${orb.id}`}
                   >
                     <div 
                       className={cn(
@@ -2576,43 +2498,58 @@ export default function ProfilePage({ session }: { session: Session | null }) {
         </>
       ) : (
         /* If activeTab is NOT null, we show the full screen segment view */
-        <div className="space-y-4">
-          {/* BACK TO HUB BAR */}
+        <div id={activeTab === 'meal_diary' ? 'tour-meal-diary' : activeTab === 'supplement_stack' ? 'tour-supplements' : undefined} className="space-y-4">
+          {/* NATIVE MOBILE BACK TO HUB BAR */}
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center justify-between mb-4 bg-[#09090B]/60 border border-white/5 p-4 rounded-3xl backdrop-blur-md"
+            initial={{ opacity: 0, x: 15 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="mb-4 sticky top-16 z-30 pt-1"
           >
-            <div className="flex items-center gap-2.5 min-w-0">
-              <span className="text-[10px] sm:text-xs font-mono text-zinc-100 uppercase tracking-widest font-black truncate">
-                {(() => {
-                  const names: Record<string, string> = {
-                    athlete_id: 'Athlete ID & Passport',
-                    diurnal_log: 'Physical Log & Workout',
-                    goal_targets: 'Goal Targets & Macros',
-                    meal_diary: 'Meal Logging & Store',
-                    exercises_pr: 'Favourites & Exercises',
-                    supplement_stack: 'Supplements Store',
-                    cardio_log: 'Cardio Log Tracker',
-                    body_measures: 'Body Stats & Dimensions',
-                    bio_records: 'Recovery & Biomarkers'
-                  };
-                  return names[activeTab || ''] || 'Segment Details';
-                })()}
-              </span>
-            </div>
-
-            <div className="flex items-center shrink-0">
+            <div className="flex items-center justify-between bg-[#0A0A0C] border border-white/10 p-3 rounded-2xl shadow-xl backdrop-blur-xl">
               <button
                 onClick={() => {
                   setActiveTab(null);
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
                 }}
-                className="flex items-center gap-1.5 px-3 py-2 sm:px-4 sm:py-2.5 bg-[#D4FF00] hover:bg-white text-black font-mono text-[10px] sm:text-[11px] uppercase font-black rounded-xl border border-transparent transition-all active:scale-95 cursor-pointer shadow-[0_0_20px_rgba(212,255,0,0.25)]"
+                className="flex items-center gap-2 px-3 py-2 bg-zinc-900 hover:bg-zinc-800 text-white font-mono text-xs uppercase font-bold rounded-xl border border-white/10 transition-all active:scale-95 cursor-pointer"
                 title="Return to Athlete Control Hub"
               >
-                BACK TO HUB <X className="w-3 h-3" />
+                <ArrowLeft className="w-4 h-4 text-[#D4FF00]" />
+                <span>HUB</span>
               </button>
+
+              <div className="flex items-center gap-2 px-2 text-center">
+                <span className="w-2 h-2 rounded-full bg-[#D4FF00] animate-pulse" />
+                <span className="text-xs font-mono text-white uppercase tracking-widest font-black truncate max-w-[180px] sm:max-w-none">
+                  {(() => {
+                    const names: Record<string, string> = {
+                      athlete_id: 'Athlete Passport',
+                      diurnal_log: 'Physical Log',
+                      goal_targets: 'Goal Targets',
+                      meal_diary: 'Meal Logging',
+                      exercises_pr: 'Favourites & PRs',
+                      supplement_stack: 'Supplements Store',
+                      cardio_log: 'Cardio Tracker',
+                      body_measures: 'Body Stats',
+                      bio_records: 'Recovery Logs'
+                    };
+                    return names[activeTab || ''] || 'Segment Details';
+                  })()}
+                </span>
+              </div>
+
+              <div className="w-[70px] flex justify-end">
+                <button
+                  onClick={() => {
+                    setActiveTab(null);
+                    window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+                  }}
+                  className="p-2 text-zinc-400 hover:text-white transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           </motion.div>
 
