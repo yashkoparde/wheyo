@@ -1,12 +1,13 @@
+import { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation, Navigate } from 'react-router-dom';
-import { Dumbbell, Utensils, ShoppingBag, User, Sparkles } from 'lucide-react';
+import { Dumbbell, Utensils, ShoppingBag, User, Sparkles, Trophy, Flame, X } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { motion, AnimatePresence } from 'motion/react';
 import { CartProvider, useCart } from '../context/CartContext';
 import { CartDrawer } from './CartDrawer';
 import { AppTourModal } from './AppTourModal';
-import { useEffect } from 'react';
+import { initNotificationEngine } from '../lib/notificationEngine';
 import type { Session } from '@supabase/supabase-js';
 
 export function cn(...inputs: ClassValue[]) {
@@ -35,9 +36,11 @@ function Header({ session }: { session: Session | null }) {
   const user = session?.user ?? null;
 
   const navItems = [
-    { path: '/', label: 'Menu', icon: Utensils },
-    { path: '/subscriptions', label: 'Subscriptions', icon: SubscriptionNavIcon },
-    { path: user ? '/profile' : '/login', label: user ? 'Profile' : 'Login', icon: User },
+    { path: '/', label: 'Menu', mobileLabel: 'Menu', icon: Utensils },
+    { path: '/workouts', label: 'Workouts', mobileLabel: 'Workouts', icon: Dumbbell },
+    { path: '/campus-league', label: 'Campus League', mobileLabel: 'Campus', icon: Trophy },
+    { path: '/subscriptions', label: 'Meal Plans', mobileLabel: 'Plans', icon: SubscriptionNavIcon },
+    { path: user ? '/profile' : '/login', label: user ? 'Profile' : 'Log In', mobileLabel: user ? 'Profile' : 'Login', icon: User },
   ];
 
   const mobileNavItems = navItems;
@@ -134,23 +137,32 @@ function Header({ session }: { session: Session | null }) {
       </div>
 
       {/* Mobile Bottom Nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#050505]/95 backdrop-blur-md border-t border-white/5 pb-safe">
-        <div className="flex justify-around items-center h-16 px-2">
-          {mobileNavItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={cn(
-                'flex flex-col items-center justify-center w-full h-full gap-1 transition-colors',
-                location.pathname === item.path
-                  ? 'text-[#D4FF00]'
-                  : 'text-gray-500 hover:text-gray-300'
-              )}
-            >
-              <item.icon className="h-6 w-6" />
-              <span className="text-[10px] font-bold uppercase tracking-wider">{item.label}</span>
-            </Link>
-          ))}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#09090D]/95 backdrop-blur-lg border-t border-white/10 pb-safe shadow-[0_-4px_25px_rgba(0,0,0,0.7)]">
+        <div className="flex justify-around items-center h-16 px-1.5">
+          {mobileNavItems.map((item) => {
+            const isActive = location.pathname === item.path;
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={cn(
+                  'flex flex-col items-center justify-center w-full h-full gap-1 transition-all duration-200 active:scale-90 relative',
+                  isActive
+                    ? 'text-[#D4FF00] font-black'
+                    : 'text-zinc-400 hover:text-zinc-200'
+                )}
+              >
+                <div className="relative">
+                  <Icon className={cn("h-5 w-5 transition-transform", isActive && "scale-110")} />
+                  {isActive && (
+                    <span className="absolute -top-1 -right-1 w-1.5 h-1.5 rounded-full bg-[#D4FF00] shadow-[0_0_8px_#D4FF00]" />
+                  )}
+                </div>
+                <span className="text-[9px] font-mono font-bold uppercase tracking-wider">{item.mobileLabel}</span>
+              </Link>
+            );
+          })}
         </div>
       </nav>
     </>
@@ -160,6 +172,24 @@ function Header({ session }: { session: Session | null }) {
 function LayoutContent({ session }: { session: Session | null }) {
   const location = useLocation();
   const { tourStep } = useCart();
+  const [activeNotif, setActiveNotif] = useState<any>(null);
+
+  // Initialize algorithmic client-side notification engine
+  useEffect(() => {
+    initNotificationEngine();
+
+    const handleInAppNotif = (e: any) => {
+      if (e.detail) {
+        setActiveNotif(e.detail);
+        setTimeout(() => setActiveNotif(null), 6500);
+      }
+    };
+
+    window.addEventListener('wheyo-inapp-notification', handleInAppNotif);
+    return () => {
+      window.removeEventListener('wheyo-inapp-notification', handleInAppNotif);
+    };
+  }, []);
 
   // Scroll to top of the page whenever path or tour step changes
   useEffect(() => {
@@ -175,8 +205,52 @@ function LayoutContent({ session }: { session: Session | null }) {
   }, [location.pathname, tourStep]);
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white font-sans selection:bg-[#D4FF00] selection:text-black pb-20 md:pb-0 relative">
+    <div className="min-h-screen bg-[#050505] text-white font-sans selection:bg-[#D4FF00] selection:text-black pb-28 md:pb-0 relative overflow-x-hidden">
       <Header session={session} />
+
+      {/* Floating Algorithmic In-App Push Notification Banner */}
+      <AnimatePresence>
+        {activeNotif && (
+          <motion.div
+            initial={{ opacity: 0, y: -40, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -40, scale: 0.95 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+            className="fixed top-4 left-3 right-3 sm:left-auto sm:right-6 sm:max-w-sm z-[250] bg-[#12121C]/95 border border-[#D4FF00]/40 rounded-2xl p-3.5 shadow-[0_10px_35px_rgba(0,0,0,0.8)] backdrop-blur-xl"
+          >
+            <div className="flex items-start justify-between gap-2.5">
+              <Link
+                to={activeNotif.actionUrl || '/workouts'}
+                onClick={() => setActiveNotif(null)}
+                className="flex items-start gap-2.5 flex-1 min-w-0"
+              >
+                <div className="w-8 h-8 rounded-xl bg-[#D4FF00]/15 border border-[#D4FF00]/30 flex items-center justify-center shrink-0 text-[#D4FF00] text-sm">
+                  ⚡
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5 mb-0.5">
+                    <span className="font-display text-xs font-black uppercase text-white truncate">
+                      {activeNotif.title}
+                    </span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#D4FF00] animate-ping shrink-0" />
+                  </div>
+                  <p className="text-[11px] font-mono text-zinc-300 leading-snug line-clamp-2">
+                    {activeNotif.body}
+                  </p>
+                </div>
+              </Link>
+
+              <button
+                onClick={() => setActiveNotif(null)}
+                className="text-zinc-500 hover:text-white p-1 rounded-lg hover:bg-white/5"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <main>
         <AnimatePresence mode="wait">
           <motion.div
@@ -225,6 +299,7 @@ function LayoutContent({ session }: { session: Session | null }) {
     </div>
   );
 }
+
 
 export default function Layout({ session }: { session: Session | null }) {
   return (

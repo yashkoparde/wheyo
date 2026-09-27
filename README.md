@@ -1,114 +1,82 @@
 <div align="center">
-  <img src="./Wheyobanner.png" width="80%" alt="Wheyo Banner"/>
-  <p><i>The Hustler's Pride.</i></p>
-</div>
-
-# WHEYO: PRECISION FUEL
-### *Shattering the gap between "Cafeteria Food" and "Peak Performance"*
-
-[![Framework: React](https://img.shields.io/badge/Framework-React_19-blue?style=for-the-badge&logo=react)](https://react.dev/)
-[![Styling: Tailwind](https://img.shields.io/badge/Style-Tailwind_4.0-06B6D4?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
-[![Database: Supabase](https://img.shields.io/badge/Backend-Supabase-3ECF8E?style=for-the-badge&logo=supabase)](https://supabase.com/)
-[![Build: Vite](https://img.shields.io/badge/Build-Vite-646CFF?style=for-the-badge&logo=vite)](https://vitejs.dev/)
-
----
-
-**WHEYO** is a high-octane macro-management system for the student-athlete. Designed with a brutalist, high-contrast aesthetic, it delivers precision-tracked protein meals right to your campus doorstep.
-
-[**VIEW THE LIVE SITE**](https://wheyo.vercel.app)
-
-## THE FEATURE STACK
-
-- **MACRO-ZERO TOLERANCE**: Every gram counted. Every calorie verified. View your fuel breakdown before you even add to cart.
-- **WHATSAPP WARP-SPEED**: No tedious forms. Just a direct link from your cart to our kitchen via WhatsApp.
-- **PROTEIN OVERDRIVE**: A dedicated dashboard to track your gains. Watch your daily intake climb with interactive charts.
-- **CAMPUS EXTRACTION POINTS**: Real-time pickup location selection. KLE? VTU? Gogte? We're there.
-- **BRUTALIST UI**: High-contrast, motion-heavy interface inspired by performance gear and digital cockpits.
-
----
-
-## THE TECH OVERLAY
-
-| Component | Technology | Role |
-| :--- | :--- | :--- |
-| **CORE** | `React 19` | High-Performance Engine |
-| **STYLE** | `Tailwind CSS 4.0` | Tactical Visuals |
-| **DATA** | `Supabase` | Neural Storage |
-| **MOTION** | `Motion.dev` | Kinetic Experience |
-| **CHARTS** | `Recharts` | Gain Visualization |
-
----
-
-## SYSTEM INITIALIZATION
-
-### 1. CLONE THE ARRAY
-```bash
-git clone https://github.com/yashkoparde/wheyo.git
-cd wheyo
-```
-
-### 2. INSTALL THE AUGMENTATIONS
-```bash
-npm install
-```
-
-### 3. CONFIGURE THE NEURAL LINK
-Create a `.env` file and link the Supabase frequency:
-```env
-VITE_SUPABASE_URL=your_frequency_url
-VITE_SUPABASE_ANON_KEY=your_access_token
-```
-
-### 4. GO LIVE
-```bash
-npm run dev
-```
-
----
-
-## PROJECT ARCHITECTURE (MISSION CONTROL)
-
-```text
-src/
-├──  components/   # Tactile UI elements & Cart mechanics
-├──  pages/        # High-concept views (Menu, Tracker, Success)
-├──  lib/          # Supabase synaptic connections
-├──  context/      # Global state (Identity & Fuel Cart)
-└──  index.css     # The design system
-```
-
----
-
-## THE EXPERIENCE
-
-<div align="center">
-  <img src="./menupage.png" width="80%" alt="Menu Page"/>
-  <p><i>Your fuel after the 5:00 AM workout.</i></p>
-</div>
-
----
-
-<div align="center">
-  <img src="./tracker.png" width="80%" alt="Tracker"/>
-  <p><i>The digital equivalent personal tracker.</i></p>
-</div>
-
----
-
-<div align="center">
-  <img src="./TDEE.png" width="80%" alt="TDEE"/>
-  <p><i>Get the TDEE Calcutor and plan accordingly!</i></p>
-</div>
-
----
-
-## JOIN THE CORE
-Found a bug? Want to optimize the macro-engine? Pull requests are the protein shakes of open source.
-
-## LICENSE
-**MIT** - *Code is meant to be free. Gains are meant to be yours.*
-
-<div align="center">
+  <img src="./Wheyobanner.png" width="85%" alt="Wheyo Banner"/>
   <br/>
-  <b>MADE FOR THE GRIND.</b>
+  <p><strong>Belgaum's 1st Cloud Protein Kitchen & Gamified Athlete Fuel Ecosystem</strong></p>
+  <p><i>Shattering the gap between cafeteria food and peak athletic performance.</i></p>
+
+  <a href="https://wheyo.vercel.app"><strong>Visit Live Platform → wheyo.vercel.app</strong></a>
+</div>
+
+---
+
+## 🍽️ The Wheyo Mission & Business Model
+
+College students, gym-goers, and hostel athletes in university towns struggle with one universal challenge: **meeting daily protein intake without junk calories or inflated restaurant bills**. Traditional mess food is carb-heavy and lacking in clean protein, while gourmet fitness meals are expensive and inaccessible.
+
+**Wheyo** solves this with a precision cloud kitchen model:
+1. **Direct-to-Campus High-Protein Kitchen**: Chef-crafted, lab-verified macro bowls, wraps, and recovery shakes delivered directly to student extraction points across Belgaum (KLE Tech, KLS GIT, VTU, Jain College, JNMC, MMEC, AITM).
+2. **"Train to Earn" Food Economy**: An algorithmic gamification engine where every logged workout (Gym sets, Calisthenics reps, 5K cardio runs) earns **Wheyo Points** (100 Points = ₹10 INR Real Discount), directly redeemable at cart checkout for instant food discounts.
+3. **Belgaum Campus League**: Inter-college athletic rivalry where students log volume and calories to boost their college's leaderboard ranking and earn exclusive campus-wide meal drops.
+4. **Custom Subscription Meal Plans**: Weekly & Monthly recurring macro plans tailored for bulking, cutting, or athletic maintenance with zero hassle.
+
+---
+
+## 🚀 How Everyone Should Use Wheyo
+
+```
+┌─────────────────┐       ┌─────────────────┐       ┌──────────────────┐       ┌─────────────────┐
+│  1. Log Workout │ ────> │ 2. Earn Points  │ ────> │ 3. Auto Refuel   │ ────> │ 4. WhatsApp Drop│
+│ 150+ Exercises  │       │ 100 Pts = ₹10   │       │ Anabolic Window  │       │ Campus Delivery │
+└─────────────────┘       └─────────────────┘       └──────────────────┘       └─────────────────┘
+```
+
+### 1. Track Daily Workouts & Torched Calories
+- Open the **Workouts** tab and choose between **Gym & Weights**, **Calisthenics**, or **Cardio**.
+- Pick from **150+ categorized exercises** or load 1-tap preset routines (*Push Day, Pull Day, Leg Day, Calisthenics Mastery, 5K Shred*).
+- Log your sets, weights, and reps. Our deterministic mathematical engine calculates your exact calories burned and volume lifted in real-time.
+
+### 2. Earn Wheyo Points as Real INR Discounts
+- Every logged workout rewards you with Wheyo Points in your digital balance.
+- 100 Wheyo Points = ₹10 off real food orders.
+- Points are automatically available as a discount slider in your Cart Drawer during checkout.
+
+### 3. Hit Your Anabolic Recovery Window
+- Immediately after finishing your workout, Wheyo computes your exact post-training protein deficit (e.g. `~35g–50g Protein`).
+- Receive an automated recovery suggestion tailored to your session with 1-tap **+ Add to Plate** ordering.
+
+### 4. Flex for Your College in the Campus League
+- Join your campus (*KLE Tech, KLS GIT, VTU Belgaum, Jain College, JNMC Medics, MMEC, Angadi AITM*).
+- Every kilogram lifted and kilometer run adds to your college's collective tonnage and ranking.
+- Generate and download your personalized **Athlete Flex Pass** to share on social media.
+
+### 5. Order Seamlessly with Zero Tedious Forms
+- Add your favorite meals to your cart, apply your earned points discount, and confirm via 1-tap WhatsApp ordering.
+- Fresh, hot, macro-dense meals arrive right at your campus extraction point.
+
+---
+
+## 🥩 The Core Menu & Macro Architecture
+
+| Category | Signature Items | Protein | Purpose |
+| :--- | :--- | :--- | :--- |
+| **Power Bowls** | Smoked Herb Chicken Rice, Paneer Muscle Mash | 42g – 55g | Post-workout hypertrophy & mass |
+| **High-Protein Wraps** | Peri-Peri Grilled Strips, Soya Protein Roll | 32g – 45g | Fast grab-and-go student fuel |
+| **Recovery Shakes** | Whey Nitro Cold Brew, Peanut Butter Blast | 28g – 36g | Rapid anabolic glycogen replenishment |
+| **Lean Salads** | Lemon Herb Grilled Chicken, Mediterranean Feta | 30g – 40g | Shredding, low-carb cutting & definition |
+
+---
+
+## 🏆 Key Platform Capabilities
+
+- **150+ Master Exercise Catalog**: Full coverage across Chest, Back, Shoulders, Legs, Arms, Core, Calisthenics, and Cardio with live search and category filtering.
+- **Client-Side Algorithmic Notification Engine**: Intelligent, local in-app and browser push notifications for post-workout refueling, hydration alerts, and campus rank updates.
+- **Mobile-First & iOS Optimized**: Fluid bottom navigation dock, safe-area insets, touch-action ergonomics, and 16px input scaling to eliminate auto-zoom glitches.
+- **Strict Boundary Security**: 100% deterministic mathematical calculations with zero AI prompt ingestion, input sanitization, and fraud-proof points clamping.
+- **Instant WhatsApp Checkout**: Direct communication channel bridging the digital tracker with the physical cloud kitchen.
+
+---
+
+<div align="center">
+  <p><strong>Wheyo — The Hustler's Pride.</strong></p>
+  <p><i>Fueling University Athletes Across Belgaum.</i></p>
 </div>

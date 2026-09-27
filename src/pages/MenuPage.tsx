@@ -122,36 +122,16 @@ export default function MenuPage({ session }: { session: Session | null }) {
   const [showIntro, setShowIntro] = useState(() => !sessionStorage.getItem('has_completed_intro'));
   const [showIdentitySelector, setShowIdentitySelector] = useState(false);
 
-  const handleIntroComplete = async () => {
+  const handleIntroComplete = () => {
     sessionStorage.setItem('has_completed_intro', 'true');
     setShowIntro(false);
-
-    if (session?.user?.id) {
-      try {
-        const { data: profData } = await supabase
-          .from('profiles')
-          .select('user_segment')
-          .eq('id', session.user.id)
-          .single();
-        if (profData?.user_segment) {
-          localStorage.setItem('user_segment', profData.user_segment);
-          return;
-        }
-      } catch (e) {
-        console.warn('Error fetching profile segment on intro complete:', e);
-      }
-      
-      const localSeg = localStorage.getItem('user_segment');
-      if (!localSeg) {
-        setShowIdentitySelector(true);
-      }
-    } else {
-      setShowIdentitySelector(true);
+    if (!localStorage.getItem('user_segment')) {
+      localStorage.setItem('user_segment', 'student');
     }
   };
 
   useEffect(() => {
-    if (showIntro || showIdentitySelector) {
+    if (showIntro) {
       document.body.style.overflow = 'hidden';
       window.scrollTo(0, 0);
     } else {
@@ -160,18 +140,18 @@ export default function MenuPage({ session }: { session: Session | null }) {
     return () => {
       document.body.style.overflow = 'unset';
     };
-  }, [showIntro, showIdentitySelector]);
+  }, [showIntro]);
 
   const { addItem, setTourStep } = useCart();
 
   useEffect(() => {
     if (!localStorage.getItem('tutorial_seen')) {
-      setTutorialStep(0);
+      localStorage.setItem('tutorial_seen', 'true');
     }
   }, []);
 
   const completeTutorial = () => {
-    setTutorialStep(-1);
+    setTourStep(-1);
     localStorage.setItem('tutorial_seen', 'true');
   };
 
@@ -195,17 +175,80 @@ export default function MenuPage({ session }: { session: Session | null }) {
     checkPendingIntent();
   }, [session, addItem]);
 
-  useEffect(() => {
-    const hasSelectedSegment = !!localStorage.getItem('user_segment');
-    if (!hasSelectedSegment && !session) {
-      navigate('/', { replace: true });
-    }
-  }, [navigate, session]);
-
-  const [userSegment, setUserSegment] = useState<string>(localStorage.getItem('user_segment') || 'student');
+  const [userSegment, setUserSegment] = useState<string>(() => localStorage.getItem('user_segment') || 'student');
   const [showIdentityModal, setShowIdentityModal] = useState(false);
   const [dismissedItemIds, setDismissedItemIds] = useState<string[]>([]);
   const [lastDismissedId, setLastDismissedId] = useState<string | null>(null);
+
+  // 🎯 Daily Protein Goal & Habit Tracker Growth Loop
+  const [dailyProteinGoal, setDailyProteinGoal] = useState<number>(() => {
+    return Number(localStorage.getItem('daily_protein_goal') || '150');
+  });
+
+  const [todayMeals, setTodayMeals] = useState<{ id: string; name: string; protein: number; calories: number; loggedAt: string }[]>(() => {
+    try {
+      return JSON.parse(localStorage.getItem('today_meals') || '[]');
+    } catch {
+      return [];
+    }
+  });
+
+  const [streakDays, setStreakDays] = useState<number>(() => {
+    return Number(localStorage.getItem('wheyo_streak_days') || '3');
+  });
+
+  const [showQuickLogModal, setShowQuickLogModal] = useState(false);
+  const [quickMealName, setQuickMealName] = useState('');
+  const [quickMealProtein, setQuickMealProtein] = useState('');
+  const [quickMealCalories, setQuickMealCalories] = useState('');
+
+  // Sync macros with storage events
+  useEffect(() => {
+    const handleMacroUpdate = () => {
+      try {
+        const meals = JSON.parse(localStorage.getItem('today_meals') || '[]');
+        setTodayMeals(meals);
+      } catch {}
+      const goal = Number(localStorage.getItem('daily_protein_goal') || '150');
+      setDailyProteinGoal(goal);
+    };
+    window.addEventListener('wheyo-macros-updated', handleMacroUpdate);
+    return () => window.removeEventListener('wheyo-macros-updated', handleMacroUpdate);
+  }, []);
+
+  const totalProteinLogged = useMemo(() => {
+    return todayMeals.reduce((sum, m) => sum + (Number(m.protein) || 0), 0);
+  }, [todayMeals]);
+
+  const proteinDeficit = Math.max(0, dailyProteinGoal - totalProteinLogged);
+  const progressPercent = Math.min(100, Math.round((totalProteinLogged / dailyProteinGoal) * 100));
+
+  const logDirectProtein = (proteinGrams: number, label: string, calories: number = 120) => {
+    const newEntry = {
+      id: 'meal_' + Date.now(),
+      name: label,
+      protein: proteinGrams,
+      calories: calories,
+      loggedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+    const updated = [newEntry, ...todayMeals];
+    setTodayMeals(updated);
+    localStorage.setItem('today_meals', JSON.stringify(updated));
+    window.dispatchEvent(new Event('wheyo-macros-updated'));
+    setToastMessage(`Logged +${proteinGrams}g Protein (${label})!`);
+    setTimeout(() => setToastMessage(null), 2500);
+  };
+
+  // 🚀 Smart "Macro Gap" Sales Conversion Recommendation
+  const recommendedMeal = useMemo(() => {
+    if (proteinDeficit <= 0 || products.length === 0) return null;
+    const sorted = [...products].sort((a, b) => {
+      const diffA = Math.abs(a.protein - proteinDeficit);
+      const diffB = Math.abs(b.protein - proteinDeficit);
+      return diffA - diffB;
+    });
+    return sorted[0] || null;
+  }, [proteinDeficit, products]);
 
   const handleSelectSegment = async (segmentId: string) => {
     localStorage.setItem('user_segment', segmentId);
@@ -409,7 +452,7 @@ export default function MenuPage({ session }: { session: Session | null }) {
       {/* Tutorial Overlay */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12 pb-28 md:pb-16 select-none">
       
-      {/* Centered Premium Title Header */}
+      {/* Centered Clean Title Header */}
       <div className="mb-6 sm:mb-8 text-center animate-fade-in flex flex-col items-center">
         <motion.h1
           initial={{ opacity: 0, y: -12 }}
@@ -417,20 +460,89 @@ export default function MenuPage({ session }: { session: Session | null }) {
           transition={{ duration: 0.4 }}
           className="text-4xl sm:text-5xl lg:text-6xl font-display uppercase tracking-widest font-black text-white"
         >
-          Fuel <span className="bg-gradient-to-r from-[#D4FF00] to-[#A3FF00] bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(212,255,0,0.3)]">Station</span>
+          Wheyo <span className="bg-gradient-to-r from-[#D4FF00] to-[#A3FF00] bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(212,255,0,0.3)]">Kitchen</span>
         </motion.h1>
+        <p className="text-zinc-400 font-mono text-[11px] sm:text-xs mt-1 tracking-wide">
+          Clean high-protein meals cooked fresh for your daily fitness goals.
+        </p>
 
-        {/* Elegant Button for Interactive Tour under Fuel Station */}
-        <button
-          type="button"
-          onClick={() => setTourStep(0)}
-          className="mt-3.5 inline-flex items-center px-4 py-2 bg-[#0A0A0C] hover:bg-[#D4FF00] text-zinc-300 hover:text-black border border-white/10 hover:border-[#D4FF00] rounded-xl font-mono text-[10px] sm:text-[11px] font-black uppercase tracking-widest transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.5)] hover:shadow-[0_0_20px_rgba(212,255,0,0.3)] hover:scale-105 active:scale-95 cursor-pointer"
-        >
-          Take a Tour
-        </button>
+        {/* Action Pills */}
+        <div className="mt-3 flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setShowIntro(true)}
+            className="inline-flex items-center px-3 py-1.5 bg-[#0E0E14] hover:bg-[#D4FF00] text-zinc-300 hover:text-black border border-white/10 hover:border-[#D4FF00] rounded-xl font-mono text-[10px] font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer active:scale-95"
+          >
+            ⚡ Replay Splash
+          </button>
+          <button
+            type="button"
+            onClick={() => setTourStep(0)}
+            className="inline-flex items-center px-3 py-1.5 bg-[#0E0E14] hover:bg-white text-zinc-300 hover:text-black border border-white/10 hover:border-white rounded-xl font-mono text-[10px] font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer active:scale-95"
+          >
+            Quick App Tour
+          </button>
+        </div>
       </div>
 
-      {/* Controls: Premium Search Bar with Filter */}
+      {/* 🎯 Daily Protein Habit Tracker Directly on the Menu */}
+      <div className="mb-6 max-w-2xl mx-auto bg-[#0E0E14] border border-white/10 rounded-2xl p-4 shadow-[0_4px_25px_rgba(0,0,0,0.5)]">
+        <div className="flex items-center justify-between gap-3 mb-2.5">
+          <div className="flex items-center gap-2">
+            <span className="text-xs sm:text-sm font-display font-extrabold uppercase text-white tracking-wide">
+              Today's Protein Goal
+            </span>
+            <span className="inline-flex items-center gap-1 bg-orange-500/15 border border-orange-500/30 text-orange-400 px-2 py-0.5 rounded-full font-mono text-[10px] font-black uppercase">
+              <Flame className="w-3 h-3 fill-orange-400" /> {streakDays} Day Streak
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="font-mono text-xs sm:text-sm font-black text-[#D4FF00]">
+              {totalProteinLogged}g <span className="text-zinc-500 font-normal">/ {dailyProteinGoal}g P</span>
+            </span>
+          </div>
+        </div>
+
+        {/* Dynamic Glowing Progress Bar */}
+        <div className="w-full bg-zinc-900 rounded-full h-2.5 overflow-hidden p-0.5 border border-white/5 mb-3">
+          <div
+            className="bg-gradient-to-r from-[#A3FF00] to-[#D4FF00] h-full rounded-full transition-all duration-500 shadow-[0_0_12px_rgba(212,255,0,0.4)]"
+            style={{ width: `${progressPercent}%` }}
+          />
+        </div>
+
+        {/* Action Row */}
+        <div className="flex items-center justify-between gap-2 flex-wrap pt-1 border-t border-white/5">
+          <span className="text-[11px] font-mono text-zinc-400">
+            {proteinDeficit > 0 ? (
+              <><strong className="text-white">{proteinDeficit}g remaining</strong> to hit your daily goal!</>
+            ) : (
+              <span className="text-[#D4FF00] font-bold">🎉 Daily protein target crushed!</span>
+            )}
+          </span>
+
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={() => logDirectProtein(25, 'Protein Scoop')}
+              className="px-2.5 py-1 bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white border border-white/10 rounded-lg font-mono text-[10px] font-bold uppercase transition-all active:scale-95 cursor-pointer"
+              title="Quick Log 25g Scoop"
+            >
+              + Scoop (25g)
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowQuickLogModal(true)}
+              className="px-2.5 py-1 bg-[#D4FF00]/15 hover:bg-[#D4FF00]/25 text-[#D4FF00] border border-[#D4FF00]/30 rounded-lg font-mono text-[10px] font-black uppercase transition-all active:scale-95 cursor-pointer"
+            >
+              + Log Custom
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Controls: Clean Search Bar with Filter */}
       <div 
         id="search-controls"
         className={cn(
@@ -445,7 +557,7 @@ export default function MenuPage({ session }: { session: Session | null }) {
             </div>
             <input
               type="text"
-              placeholder="Search roll, egg, chicken..."
+              placeholder="Search chicken, eggs, soya, paneer, rolls..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-[#141414] border border-transparent rounded-xl py-3 pl-11 pr-4 text-xs font-medium text-white placeholder:text-gray-600 focus:outline-none focus:border-[#D4FF00]/25 focus:bg-[#161616] transition-all"
@@ -545,6 +657,34 @@ export default function MenuPage({ session }: { session: Session | null }) {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* 🚀 Smart "Macro Gap" Sales Conversion Banner */}
+      {recommendedMeal && proteinDeficit > 15 && (
+        <div className="mb-6 max-w-3xl mx-auto bg-gradient-to-r from-[#14141A] via-[#181822] to-[#14141A] border border-[#D4FF00]/30 rounded-2xl p-3.5 sm:p-4 flex items-center justify-between gap-3 shadow-[0_0_20px_rgba(212,255,0,0.12)]">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-white/10 bg-zinc-900 hidden sm:block">
+              <img src={recommendedMeal.image} alt={recommendedMeal.name} className="w-full h-full object-cover" />
+            </div>
+            <div className="min-w-0">
+              <span className="text-[10px] font-mono font-bold uppercase text-[#D4FF00] tracking-wider block">
+                🎯 Target Gap: Need {proteinDeficit}g Protein
+              </span>
+              <p className="text-xs sm:text-sm font-display font-extrabold uppercase text-white line-clamp-1">
+                Fuel up with {recommendedMeal.name} (+{recommendedMeal.protein}g P)
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={(e) => handleAddDirect(recommendedMeal, e)}
+            className="px-3.5 py-2 bg-[#D4FF00] hover:bg-white text-black font-mono text-xs font-black uppercase rounded-xl flex items-center gap-1.5 shrink-0 shadow-[0_0_12px_rgba(212,255,0,0.3)] active:scale-95 transition-all cursor-pointer"
+          >
+            <Plus className="w-3.5 h-3.5 stroke-[3]" />
+            <span>Add ₹{recommendedMeal.price}</span>
+          </button>
+        </div>
+      )}
 
 
 
@@ -649,6 +789,103 @@ export default function MenuPage({ session }: { session: Session | null }) {
               </button>
             </div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Quick Custom Meal Log Modal */}
+      <AnimatePresence>
+        {showQuickLogModal && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowQuickLogModal(false)}
+              className="fixed inset-0 bg-black/80 z-[120]"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="fixed left-4 right-4 top-1/2 -translate-y-1/2 md:inset-0 md:m-auto w-auto md:w-full max-w-sm h-fit bg-[#0F0F14] border border-white/10 rounded-3xl p-6 shadow-2xl z-[120] select-none"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-display text-lg font-black uppercase text-white tracking-wider">
+                  Log What You Ate
+                </h3>
+                <button
+                  onClick={() => setShowQuickLogModal(false)}
+                  className="p-1 text-zinc-400 hover:text-white rounded-lg bg-white/5"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="space-y-3">
+                <div>
+                  <label className="text-[10px] font-mono uppercase text-zinc-400 font-bold block mb-1">
+                    Meal Name (e.g. 4 Boiled Eggs, Protein Shake)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. 4 Boiled Eggs, Greek Yogurt"
+                    value={quickMealName}
+                    onChange={(e) => setQuickMealName(e.target.value)}
+                    className="w-full bg-[#16161C] border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white placeholder:text-zinc-600 focus:outline-none focus:border-[#D4FF00]/40"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-[10px] font-mono uppercase text-[#D4FF00] font-bold block mb-1">
+                      Protein (g)
+                    </label>
+                    <input
+                      type="number"
+                      placeholder="e.g. 30"
+                      value={quickMealProtein}
+                      onChange={(e) => setQuickMealProtein(e.target.value)}
+                      className="w-full bg-[#16161C] border border-[#D4FF00]/20 rounded-xl px-3 py-2.5 text-xs text-white placeholder:text-zinc-600 focus:outline-none focus:border-[#D4FF00]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] font-mono uppercase text-zinc-400 font-bold block mb-1">
+                      Calories (kcal)
+                    </label>
+                    <input
+                      type="number"
+                      placeholder="e.g. 250"
+                      value={quickMealCalories}
+                      onChange={(e) => setQuickMealCalories(e.target.value)}
+                      className="w-full bg-[#16161C] border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white placeholder:text-zinc-600 focus:outline-none focus:border-[#D4FF00]/40"
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const p = Number(quickMealProtein);
+                      if (!p || p <= 0) return;
+                      const name = quickMealName.trim() || 'Custom Meal';
+                      const cal = Number(quickMealCalories) || (p * 4 + 100);
+                      logDirectProtein(p, name, cal);
+                      setQuickMealName('');
+                      setQuickMealProtein('');
+                      setQuickMealCalories('');
+                      setShowQuickLogModal(false);
+                    }}
+                    disabled={!quickMealProtein || Number(quickMealProtein) <= 0}
+                    className="w-full py-3 bg-[#D4FF00] hover:bg-white text-black font-mono text-xs font-black uppercase rounded-xl transition-all shadow-[0_0_15px_rgba(212,255,0,0.3)] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer active:scale-95"
+                  >
+                    + Save to Today's Log
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
 

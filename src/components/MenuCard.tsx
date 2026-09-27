@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShoppingCart, Heart, Info, Plus } from 'lucide-react';
+import { Heart, Info, Plus, Flame } from 'lucide-react';
 import { cn } from './Layout';
 
 export interface MenuItem {
@@ -29,35 +29,35 @@ export interface MenuCardProps {
 export function MenuCardSkeleton({ mode = 'grid' }: { mode?: 'grid' | 'list' }) {
   if (mode === 'list') {
     return (
-      <div className="bg-[#0D0D10] border border-white/5 rounded-2xl p-3.5 sm:p-4 flex items-center justify-between gap-3 animate-pulse h-[98px] sm:h-[112px]">
-        <div className="w-18 h-18 sm:w-20 sm:h-20 bg-[#16161A] rounded-xl shrink-0" />
+      <div className="bg-[#0C0C10] border border-white/5 rounded-2xl p-3.5 sm:p-4 flex items-center justify-between gap-3 animate-pulse h-[105px] sm:h-[118px]">
+        <div className="w-20 h-20 sm:w-24 sm:h-24 bg-[#18181E] rounded-xl shrink-0" />
         <div className="flex-1 space-y-2.5">
           <div className="h-4 bg-white/10 rounded w-3/4" />
-          <div className="h-3.5 bg-[#D4FF00]/10 rounded w-16" />
+          <div className="h-3.5 bg-[#D4FF00]/10 rounded w-20" />
         </div>
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-white/5 rounded-lg" />
-          <div className="w-8 h-8 bg-[#D4FF00]/10 rounded-lg" />
+          <div className="w-16 h-8 bg-[#D4FF00]/10 rounded-lg" />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-[#0D0D10] border border-white/5 rounded-2xl overflow-hidden animate-pulse h-[240px] flex flex-col">
-      <div className="h-32 bg-[#16161A] shrink-0" />
+    <div className="bg-[#0C0C10] border border-white/5 rounded-2xl overflow-hidden animate-pulse h-[250px] flex flex-col">
+      <div className="h-36 bg-[#18181E] shrink-0" />
       <div className="p-3 flex-1 flex flex-col justify-between">
         <div className="h-4 bg-white/10 rounded w-4/5" />
         <div className="flex items-center justify-between pt-2">
-          <div className="h-4 bg-[#D4FF00]/10 rounded w-14" />
-          <div className="w-8 h-8 bg-[#D4FF00]/10 rounded-lg" />
+          <div className="h-4 bg-[#D4FF00]/10 rounded w-16" />
+          <div className="w-14 h-8 bg-[#D4FF00]/10 rounded-lg" />
         </div>
       </div>
     </div>
   );
 }
 
-export function MenuCard({ item, onOrder, onAddDirect, onInfo, mode = 'grid' }: MenuCardProps) {
+export function MenuCard({ item, onOrder, onAddDirect, onInfo, mode = 'list' }: MenuCardProps) {
   const [showHeartPop, setShowHeartPop] = React.useState(false);
   const lastTapRef = React.useRef<number>(0);
 
@@ -75,9 +75,7 @@ export function MenuCard({ item, onOrder, onAddDirect, onInfo, mode = 'grid' }: 
       try {
         const favs = JSON.parse(localStorage.getItem('wheyo_favorites') || '[]');
         setIsFav(Array.isArray(favs) ? favs.includes(item.id) : false);
-      } catch {
-        // Safe fallback
-      }
+      } catch {}
     };
     window.addEventListener('wheyo-favorites-changed', handleUpdate);
     return () => window.removeEventListener('wheyo-favorites-changed', handleUpdate);
@@ -122,7 +120,9 @@ export function MenuCard({ item, onOrder, onAddDirect, onInfo, mode = 'grid' }: 
     lastTapRef.current = now;
   };
 
-  // High-performance List Mode (default for smooth vertical scroll on mobile)
+  const isBestseller = item.tags?.includes('Bestseller');
+
+  // List Mode (Primary High-Converting Card)
   if (mode === 'list') {
     return (
       <div
@@ -130,12 +130,12 @@ export function MenuCard({ item, onOrder, onAddDirect, onInfo, mode = 'grid' }: 
           triggerHaptic(8);
           onOrder();
         }}
-        className="bg-[#0A0A0C] border border-white/5 hover:border-white/15 rounded-2xl p-3 sm:p-4 flex items-center justify-between gap-3 sm:gap-4 transition-colors cursor-pointer group active:bg-[#121215] w-full relative overflow-hidden select-none"
+        className="bg-[#0C0C10] border border-white/10 hover:border-[#D4FF00]/40 rounded-2xl p-3 sm:p-4 flex items-center justify-between gap-3 sm:gap-4 transition-all duration-200 cursor-pointer group active:scale-[0.99] w-full relative overflow-hidden select-none shadow-[0_4px_20px_rgba(0,0,0,0.4)]"
       >
-        {/* Left Image Thumbnail */}
+        {/* Left Vivid Image Thumbnail */}
         <div
           onClick={handleThumbnailTap}
-          className="relative w-18 h-18 sm:w-22 sm:h-22 bg-[#141416] rounded-xl overflow-hidden shrink-0 border border-white/5 select-none"
+          className="relative w-20 h-20 sm:w-24 sm:h-24 bg-[#18181E] rounded-xl overflow-hidden shrink-0 border border-white/10 shadow-md select-none"
         >
           <img
             src={item.image}
@@ -147,11 +147,11 @@ export function MenuCard({ item, onOrder, onAddDirect, onInfo, mode = 'grid' }: 
           />
 
           {/* Veg / Non-Veg Dot Indicator */}
-          <div className="absolute top-1 left-1 z-10 flex items-center bg-black/80 px-1 py-0.5 rounded border border-white/10">
+          <div className="absolute top-1.5 left-1.5 z-10 flex items-center bg-black/85 px-1.5 py-0.5 rounded-md border border-white/10 shadow-sm">
             <span
               className={cn(
-                "w-1.5 h-1.5 rounded-full",
-                item.isVeg ? "bg-green-500" : "bg-red-500"
+                "w-1.5 h-1.5 rounded-full shadow-sm",
+                item.isVeg ? "bg-emerald-400 shadow-[0_0_6px_#34d399]" : "bg-rose-500 shadow-[0_0_6px_#f43f5e]"
               )}
             />
           </div>
@@ -160,43 +160,54 @@ export function MenuCard({ item, onOrder, onAddDirect, onInfo, mode = 'grid' }: 
           <button
             type="button"
             onClick={toggleFav}
-            className="absolute top-1 right-1 z-20 w-6 h-6 rounded-md bg-black/75 flex items-center justify-center border border-white/10 hover:border-red-500/30 transition-colors active:scale-90"
+            className="absolute top-1.5 right-1.5 z-20 w-6 h-6 rounded-md bg-black/80 flex items-center justify-center border border-white/10 hover:border-rose-500/40 transition-colors active:scale-90"
             title="Favorite"
           >
             <Heart
               className={cn(
                 "w-3 h-3 transition-colors",
-                isFav ? "fill-red-500 text-red-500" : "text-zinc-400"
+                isFav ? "fill-rose-500 text-rose-500" : "text-zinc-400"
               )}
             />
           </button>
 
           {/* Double tap heart animation */}
           {showHeartPop && (
-            <div className="absolute inset-0 bg-black/40 flex items-center justify-center z-30 animate-scale-in">
-              <Heart className="w-7 h-7 fill-[#D4FF00] text-[#D4FF00]" />
+            <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-30 animate-scale-in">
+              <Heart className="w-8 h-8 fill-[#D4FF00] text-[#D4FF00] drop-shadow-[0_0_10px_#D4FF00]" />
             </div>
           )}
         </div>
 
-        {/* Center Details */}
-        <div className="flex-1 min-w-0 flex flex-col justify-center gap-1">
-          <h3 className="text-[13.5px] sm:text-[15.5px] font-display font-bold uppercase tracking-wide text-zinc-100 group-hover:text-[#D4FF00] transition-colors line-clamp-1">
-            {item.name}
-          </h3>
+        {/* Center Details: High-impact typography */}
+        <div className="flex-1 min-w-0 flex flex-col justify-center gap-1.5 py-0.5">
+          <div className="flex items-center gap-1.5">
+            <h3 className="text-[14px] sm:text-[16px] font-display font-extrabold uppercase tracking-wide text-white group-hover:text-[#D4FF00] transition-colors line-clamp-1">
+              {item.name}
+            </h3>
+            {isBestseller && (
+              <span className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-orange-500/20 text-orange-400 font-mono text-[9px] font-black uppercase tracking-wider shrink-0">
+                <Flame className="w-2.5 h-2.5 fill-orange-400" /> Hot
+              </span>
+            )}
+          </div>
 
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center bg-[#D4FF00]/10 border border-[#D4FF00]/25 px-1.5 py-0.5 rounded font-mono text-[11px] sm:text-xs text-[#D4FF00] font-black leading-none whitespace-nowrap">
-              {item.protein}g Protein
+          {/* Macro Split & Price Badges */}
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="inline-flex items-center bg-[#D4FF00]/15 border border-[#D4FF00]/30 px-2 py-0.5 rounded-lg font-mono text-[11px] sm:text-xs text-[#D4FF00] font-black leading-none whitespace-nowrap shadow-[0_0_10px_rgba(212,255,0,0.1)]">
+              🍗 {item.protein}g Protein
             </span>
-            <span className="text-xs sm:text-sm font-mono text-zinc-300 font-bold leading-none whitespace-nowrap">
+            <span className="text-[10px] sm:text-xs font-mono text-zinc-400 font-bold leading-none whitespace-nowrap">
+              {item.calories} kcal
+            </span>
+            <span className="text-xs sm:text-sm font-mono text-white font-black bg-white/5 border border-white/10 px-2 py-0.5 rounded-lg leading-none whitespace-nowrap">
               ₹{item.price}
             </span>
           </div>
         </div>
 
-        {/* Right Actions */}
-        <div className="flex items-center gap-1.5 shrink-0">
+        {/* Right Actions: Tactile Impulse Buttons */}
+        <div className="flex items-center gap-2 shrink-0">
           <button
             type="button"
             onClick={(e) => {
@@ -205,8 +216,8 @@ export function MenuCard({ item, onOrder, onAddDirect, onInfo, mode = 'grid' }: 
               if (onInfo) onInfo(e);
               else onOrder();
             }}
-            className="w-8 h-8 sm:w-9 sm:h-9 border border-white/5 hover:border-white/20 text-zinc-400 hover:text-white rounded-xl flex items-center justify-center bg-white/5 active:bg-zinc-800 transition-colors"
-            title="Nutrition Info"
+            className="w-8 h-8 sm:w-9 sm:h-9 border border-white/10 hover:border-white/30 text-zinc-400 hover:text-white rounded-xl flex items-center justify-center bg-white/5 active:bg-zinc-800 transition-colors"
+            title="Nutrition Details"
           >
             <Info className="w-4 h-4" />
           </button>
@@ -215,14 +226,14 @@ export function MenuCard({ item, onOrder, onAddDirect, onInfo, mode = 'grid' }: 
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              triggerHaptic(15);
+              triggerHaptic(18);
               if (onAddDirect) onAddDirect(e);
               else onOrder();
             }}
-            className="h-8 px-2.5 sm:h-9 sm:px-3 bg-[#D4FF00] hover:bg-white text-black font-mono text-xs font-black uppercase rounded-xl flex items-center justify-center gap-1 shadow-sm active:scale-95 transition-all"
-            title="Add to Cart"
+            className="h-8 px-3 sm:h-9 sm:px-4 bg-[#D4FF00] hover:bg-white text-black font-mono text-xs font-black uppercase rounded-xl flex items-center justify-center gap-1.5 shadow-[0_0_15px_rgba(212,255,0,0.25)] hover:shadow-[0_0_20px_rgba(212,255,0,0.4)] active:scale-95 transition-all cursor-pointer"
+            title="Add to Plate"
           >
-            <Plus className="w-3.5 h-3.5 stroke-[3]" />
+            <Plus className="w-4 h-4 stroke-[3]" />
             <span>Add</span>
           </button>
         </div>
@@ -237,11 +248,11 @@ export function MenuCard({ item, onOrder, onAddDirect, onInfo, mode = 'grid' }: 
         triggerHaptic(8);
         onOrder();
       }}
-      className="bg-[#0A0A0C] border border-white/5 hover:border-white/15 rounded-2xl overflow-hidden group transition-colors flex flex-col h-full cursor-pointer relative active:bg-[#121215] w-full select-none"
+      className="bg-[#0C0C10] border border-white/10 hover:border-[#D4FF00]/40 rounded-2xl overflow-hidden group transition-all duration-200 flex flex-col h-full cursor-pointer relative active:scale-[0.99] w-full select-none shadow-[0_4px_20px_rgba(0,0,0,0.4)]"
     >
       <div
         onClick={handleThumbnailTap}
-        className="relative h-32 sm:h-40 overflow-hidden bg-[#141416] border-b border-white/5"
+        className="relative h-36 sm:h-44 overflow-hidden bg-[#18181E] border-b border-white/10"
       >
         <img
           src={item.image}
@@ -252,11 +263,11 @@ export function MenuCard({ item, onOrder, onAddDirect, onInfo, mode = 'grid' }: 
           referrerPolicy="no-referrer"
         />
 
-        <div className="absolute top-2 left-2 z-10 flex items-center bg-black/80 px-1.5 py-0.5 rounded border border-white/10">
+        <div className="absolute top-2 left-2 z-10 flex items-center bg-black/85 px-1.5 py-0.5 rounded-md border border-white/10 shadow-sm">
           <span
             className={cn(
-              "w-1.5 h-1.5 rounded-full",
-              item.isVeg ? "bg-green-500" : "bg-red-500"
+              "w-1.5 h-1.5 rounded-full shadow-sm",
+              item.isVeg ? "bg-emerald-400 shadow-[0_0_6px_#34d399]" : "bg-rose-500 shadow-[0_0_6px_#f43f5e]"
             )}
           />
         </div>
@@ -264,41 +275,41 @@ export function MenuCard({ item, onOrder, onAddDirect, onInfo, mode = 'grid' }: 
         <button
           type="button"
           onClick={toggleFav}
-          className="absolute top-2 right-2 z-20 w-7 h-7 rounded-lg bg-black/80 flex items-center justify-center border border-white/10 hover:border-red-500/30 transition-colors active:scale-90"
+          className="absolute top-2 right-2 z-20 w-7 h-7 rounded-lg bg-black/80 flex items-center justify-center border border-white/10 hover:border-rose-500/40 transition-colors active:scale-90"
           title="Favorite"
         >
           <Heart
             className={cn(
               "w-3.5 h-3.5 transition-colors",
-              isFav ? "fill-red-500 text-red-500" : "text-zinc-400"
+              isFav ? "fill-rose-500 text-rose-500" : "text-zinc-400"
             )}
           />
         </button>
 
         {showHeartPop && (
-          <div className="absolute inset-0 bg-black/40 flex items-center justify-center z-30 animate-scale-in">
-            <Heart className="w-8 h-8 fill-[#D4FF00] text-[#D4FF00]" />
+          <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-30 animate-scale-in">
+            <Heart className="w-8 h-8 fill-[#D4FF00] text-[#D4FF00] drop-shadow-[0_0_10px_#D4FF00]" />
           </div>
         )}
       </div>
 
-      <div className="p-3 sm:p-4 flex-1 flex flex-col justify-between">
+      <div className="p-3.5 sm:p-4 flex-1 flex flex-col justify-between">
         <div>
-          <h3 className="text-xs sm:text-sm font-display font-bold uppercase tracking-wide text-zinc-100 group-hover:text-[#D4FF00] transition-colors line-clamp-1 mb-1.5">
+          <h3 className="text-xs sm:text-sm font-display font-extrabold uppercase tracking-wide text-white group-hover:text-[#D4FF00] transition-colors line-clamp-1 mb-2">
             {item.name}
           </h3>
 
           <div className="flex items-center justify-between gap-1 mb-3">
-            <span className="inline-flex items-center bg-[#D4FF00]/10 border border-[#D4FF00]/25 px-1.5 py-0.5 rounded font-mono text-[10.5px] sm:text-xs text-[#D4FF00] font-black leading-none whitespace-nowrap">
-              {item.protein}g Protein
+            <span className="inline-flex items-center bg-[#D4FF00]/15 border border-[#D4FF00]/30 px-2 py-0.5 rounded-lg font-mono text-[11px] sm:text-xs text-[#D4FF00] font-black leading-none whitespace-nowrap shadow-[0_0_10px_rgba(212,255,0,0.1)]">
+              🍗 {item.protein}g Protein
             </span>
-            <span className="text-xs sm:text-sm font-mono text-zinc-200 font-bold leading-none whitespace-nowrap">
+            <span className="text-xs sm:text-sm font-mono text-white font-black bg-white/5 border border-white/10 px-2 py-0.5 rounded-lg leading-none whitespace-nowrap">
               ₹{item.price}
             </span>
           </div>
         </div>
 
-        <div className="flex items-center gap-1.5 pt-1">
+        <div className="flex items-center gap-2 pt-1">
           <button
             type="button"
             onClick={(e) => {
@@ -307,7 +318,7 @@ export function MenuCard({ item, onOrder, onAddDirect, onInfo, mode = 'grid' }: 
               if (onInfo) onInfo(e);
               else onOrder();
             }}
-            className="flex-1 py-1.5 bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white border border-white/10 rounded-lg flex items-center justify-center gap-1 text-[10px] sm:text-xs font-mono font-bold uppercase transition-colors"
+            className="flex-1 py-1.5 bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white border border-white/10 rounded-xl flex items-center justify-center gap-1 text-[10px] sm:text-xs font-mono font-bold uppercase transition-colors"
           >
             <Info className="w-3.5 h-3.5" />
             <span>Info</span>
@@ -317,11 +328,11 @@ export function MenuCard({ item, onOrder, onAddDirect, onInfo, mode = 'grid' }: 
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              triggerHaptic(15);
+              triggerHaptic(18);
               if (onAddDirect) onAddDirect(e);
               else onOrder();
             }}
-            className="flex-1 py-1.5 bg-[#D4FF00] hover:bg-white text-black rounded-lg flex items-center justify-center gap-1 text-[10px] sm:text-xs font-mono font-black uppercase transition-all shadow-sm active:scale-95"
+            className="flex-1 py-1.5 bg-[#D4FF00] hover:bg-white text-black rounded-xl flex items-center justify-center gap-1 text-[10px] sm:text-xs font-mono font-black uppercase transition-all shadow-[0_0_12px_rgba(212,255,0,0.2)] active:scale-95 cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5 stroke-[3]" />
             <span>Add</span>

@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Minus, Plus, ShoppingBag, ArrowRight, Trash2, Tag, MapPin, User, Phone, Loader2, ChevronDown } from 'lucide-react';
+import { X, Minus, Plus, ShoppingBag, ArrowRight, Trash2, Tag, MapPin, User, Phone, Loader2, ChevronDown, Coins, Sparkles } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { UpiPaymentModal } from './UpiPaymentModal';
+import { getPointsBalance, deductPoints, POINTS_TO_INR_RATIO } from '../lib/workoutMath';
 
 const WHATSAPP_ORDER_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || '918778168629';
 const FLAT_COUPON_CODE = import.meta.env.VITE_COUPON_FLAT_CODE || 'WHEYO50';
@@ -36,7 +37,15 @@ export function CartDrawer() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [qualifyingOrdersCount, setQualifyingOrdersCount] = useState(0);
+  const [userPoints, setUserPoints] = useState<number>(getPointsBalance);
+  const [redeemPoints, setRedeemPoints] = useState<number>(0);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handlePointsUpdate = () => setUserPoints(getPointsBalance());
+    window.addEventListener('wheyo-points-updated', handlePointsUpdate);
+    return () => window.removeEventListener('wheyo-points-updated', handlePointsUpdate);
+  }, []);
 
   // Fetch previous qualifying orders count
   useEffect(() => {
@@ -263,7 +272,9 @@ export function CartDrawer() {
     loyaltyMessage = "🎉 Milestone Loyalty: 10% off applied on your 5th order above ₹299!";
   }
 
-  const activeDiscount = Math.max(discount, loyaltyDiscount);
+  const pointsDiscount = Math.round(redeemPoints * POINTS_TO_INR_RATIO);
+  const baseDiscount = Math.max(discount, loyaltyDiscount);
+  const activeDiscount = Math.min(totalPrice, baseDiscount + pointsDiscount);
   const finalPrice = Math.max(0, totalPrice - activeDiscount);
 
   const handleCheckout = () => {
@@ -316,6 +327,10 @@ export function CartDrawer() {
         };
         localOrders.unshift(newOrder);
         localStorage.setItem('local_orders', JSON.stringify(localOrders));
+
+        if (redeemPoints > 0) {
+          deductPoints(redeemPoints, `Redeemed for Order #${orderId}`);
+        }
 
         const orderProtein = items.reduce((sum, item) => {
           const itemProtein = Number(item.protein || 0);
@@ -692,6 +707,66 @@ export function CartDrawer() {
                       </AnimatePresence>
                     </div>
                   </div>
+
+                  {/* Wheyo Workout Points Redemption Card */}
+                  {userPoints > 0 && (
+                    <div className="bg-gradient-to-r from-[#141422] to-[#0D0D16] p-3.5 rounded-2xl border border-[#D4FF00]/30 mx-1 space-y-2.5 shadow-[0_0_20px_rgba(212,255,0,0.08)]">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1.5">
+                          <Coins className="w-3.5 h-3.5 text-[#D4FF00]" />
+                          <span className="text-[10px] font-mono font-black uppercase text-[#D4FF00] tracking-wider">
+                            Redeem Workout Points
+                          </span>
+                        </div>
+                        <span className="text-[10px] font-mono text-zinc-400">
+                          Balance: <strong className="text-white">{userPoints} PTS</strong> (₹{(userPoints * POINTS_TO_INR_RATIO).toFixed(0)})
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        {[100, 200, 300]
+                          .filter((pts) => pts <= userPoints && pts * POINTS_TO_INR_RATIO <= totalPrice)
+                          .map((pts) => (
+                            <button
+                              key={pts}
+                              type="button"
+                              onClick={() => setRedeemPoints(redeemPoints === pts ? 0 : pts)}
+                              className={`px-2.5 py-1.5 rounded-xl font-mono text-[10px] font-black uppercase border transition-all cursor-pointer active:scale-95 ${
+                                redeemPoints === pts
+                                  ? 'bg-[#D4FF00] text-black border-[#D4FF00] shadow-[0_0_12px_rgba(212,255,0,0.35)]'
+                                  : 'bg-black/50 text-zinc-300 border-white/10 hover:border-white/20'
+                              }`}
+                            >
+                              {redeemPoints === pts ? `✓ ₹${pts * POINTS_TO_INR_RATIO} Applied` : `Use ${pts} Pts (₹${pts * POINTS_TO_INR_RATIO} OFF)`}
+                            </button>
+                          ))}
+
+                        {userPoints > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const maxPts = Math.min(userPoints, Math.floor(totalPrice / POINTS_TO_INR_RATIO));
+                              setRedeemPoints(redeemPoints === maxPts ? 0 : maxPts);
+                            }}
+                            className={`px-2.5 py-1.5 rounded-xl font-mono text-[10px] font-black uppercase border transition-all cursor-pointer active:scale-95 ${
+                              redeemPoints > 0 && redeemPoints === Math.min(userPoints, Math.floor(totalPrice / POINTS_TO_INR_RATIO))
+                                ? 'bg-[#D4FF00] text-black border-[#D4FF00]'
+                                : 'bg-white/5 text-zinc-400 border-white/5 hover:text-white'
+                            }`}
+                          >
+                            {redeemPoints > 0 ? 'Clear' : 'Max Points'}
+                          </button>
+                        )}
+                      </div>
+
+                      {redeemPoints > 0 && (
+                        <div className="text-[10px] font-mono text-[#D4FF00] font-bold flex items-center gap-1 pt-0.5">
+                          <Sparkles className="w-3 h-3" />
+                          <span>Using {redeemPoints} Points — Saving ₹{pointsDiscount} Real INR on this meal!</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
 
                   {/* Promo Code - Moved from footer to scrollable area */}
                   <div className="bg-white/[0.03] p-3 rounded-2xl border border-white/5 mx-1">

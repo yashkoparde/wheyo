@@ -10,6 +10,8 @@ import MenuPage from './pages/MenuPage';
 import LoginPage from './pages/LoginPage';
 import ProfilePage from './pages/ProfilePage';
 import SubscriptionsPage from './pages/SubscriptionsPage';
+import WorkoutsPage from './pages/WorkoutsPage';
+import CampusLeaguePage from './pages/CampusLeaguePage';
 import OrderSuccessPage from './pages/OrderSuccessPage';
 import PrivacyPage from './pages/PrivacyPage';
 import TermsPage from './pages/TermsPage';
@@ -138,6 +140,8 @@ export default function App() {
             element={<ProfileRoute session={session} />} 
           />
           <Route path="subscriptions" element={<SubscriptionsPage session={session} />} />
+          <Route path="workouts" element={<WorkoutsPage />} />
+          <Route path="campus-league" element={<CampusLeaguePage />} />
           <Route path="order-success" element={<OrderSuccessPage />} />
           <Route path="privacy" element={<PrivacyPage />} />
           <Route path="terms" element={<TermsPage />} />

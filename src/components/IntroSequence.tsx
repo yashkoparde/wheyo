@@ -1,10 +1,19 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'motion/react';
 
 export function IntroSequence({ onComplete }: { onComplete: () => void }) {
+  // Guaranteed completion safety timer (ensures onComplete triggers even if GPU animation callback drops)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      onComplete();
+    }, 5200);
+    return () => clearTimeout(timer);
+  }, [onComplete]);
+
   return (
     <motion.div
-      className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-[#050505] overflow-hidden"
+      onClick={onComplete}
+      className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-[#050505] overflow-hidden cursor-pointer select-none"
       initial={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 1.2, ease: "easeInOut" }}
@@ -69,6 +78,11 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
       
       {/* Vignette for cinematic feel */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_10%,#050505_100%)] z-50 pointer-events-none" />
+
+      {/* Instant Skip Trigger */}
+      <div className="absolute bottom-6 sm:bottom-8 z-50 text-zinc-500 hover:text-zinc-300 font-mono text-[10px] uppercase tracking-widest transition-colors">
+        Tap anywhere to enter →
+      </div>
     </motion.div>
   );
 }
