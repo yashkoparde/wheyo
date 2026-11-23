@@ -10,6 +10,8 @@ import { AppTourModal } from './AppTourModal';
 import { initNotificationEngine } from '../lib/notificationEngine';
 import type { Session } from '@supabase/supabase-js';
 
+import { QuickCartPill } from './QuickCartPill';
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -36,10 +38,9 @@ function Header({ session }: { session: Session | null }) {
   const user = session?.user ?? null;
 
   const navItems = [
-    { path: '/', label: 'Menu', mobileLabel: 'Menu', icon: Utensils },
     { path: '/workouts', label: 'Workouts', mobileLabel: 'Workouts', icon: Dumbbell },
-    { path: '/campus-league', label: 'Campus League', mobileLabel: 'Campus', icon: Trophy },
-    { path: '/subscriptions', label: 'Meal Plans', mobileLabel: 'Plans', icon: SubscriptionNavIcon },
+    { path: '/', label: 'Menu & Refuel', mobileLabel: 'Menu & Refuel', icon: Utensils },
+    { path: '/subscriptions', label: 'Meal Plans', mobileLabel: 'Meal Plans', icon: SubscriptionNavIcon },
     { path: user ? '/profile' : '/login', label: user ? 'Profile' : 'Log In', mobileLabel: user ? 'Profile' : 'Login', icon: User },
   ];
 
@@ -53,7 +54,7 @@ function Header({ session }: { session: Session | null }) {
       <nav className="sticky top-0 z-40 border-b border-white/5 bg-[#050505]/80 backdrop-blur-md hidden md:block">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
-            <Link to="/" className="flex items-center gap-3 group">
+            <Link to="/workouts" className="flex items-center gap-3 group">
               <Dumbbell className="h-8 w-8 text-[#D4FF00] group-hover:scale-110 transition-transform" />
               <span className="font-display text-2xl tracking-wide uppercase font-black text-white group-hover:text-[#D4FF00] transition-colors">
                 Wheyo
@@ -111,7 +112,7 @@ function Header({ session }: { session: Session | null }) {
 
       {/* Mobile Top Header */}
       <div className="md:hidden sticky top-0 z-40 border-b border-white/5 bg-[#050505]/80 backdrop-blur-md px-4 py-4 flex justify-between items-center">
-        <Link to="/" className="flex items-center gap-2 group">
+        <Link to="/workouts" className="flex items-center gap-2 group">
           <Dumbbell className="h-6 w-6 text-[#D4FF00] group-hover:scale-110 transition-transform" />
           <span className="font-display text-xl tracking-wide uppercase font-black text-white group-hover:text-[#D4FF00] transition-colors">
             Wheyo
@@ -264,37 +265,138 @@ function LayoutContent({ session }: { session: Session | null }) {
           </motion.div>
         </AnimatePresence>
       </main>
-      {!['/subscriptions', '/profile'].includes(location.pathname) && (
-        <footer className="border-t border-white/5 bg-[#000000] py-6 mt-12">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-center sm:text-left">
-              <div className="flex flex-col sm:flex-row items-center gap-2.5">
-                <Link to="/" className="flex items-center gap-1.5 justify-center">
-                  <Dumbbell className="h-4 w-4 text-[#D4FF00]" />
-                  <span className="font-display text-sm tracking-wide uppercase font-black">
-                    Wheyo
-                  </span>
-                </Link>
-                <p className="text-zinc-600 text-[10px] font-mono uppercase tracking-wider">
-                  &copy; {new Date().getFullYear()} Wheyo. Fuel your workouts.
-                </p>
-              </div>
-              <div className="flex items-center gap-4 flex-wrap justify-center">
-                <Link to="/privacy" className="text-[10px] font-mono uppercase tracking-widest text-zinc-500 hover:text-[#D4FF00] transition-colors">
-                  Privacy
-                </Link>
-                <Link to="/terms" className="text-[10px] font-mono uppercase tracking-widest text-zinc-500 hover:text-[#D4FF00] transition-colors">
-                  Terms
-                </Link>
-                <Link to="/refunds" className="text-[10px] font-mono uppercase tracking-widest text-zinc-500 hover:text-[#D4FF00] transition-colors">
-                  Refunds
-                </Link>
+      <footer className="border-t border-white/5 bg-[#030304] pt-12 pb-28 md:pb-12 mt-16 text-zinc-400">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+          {/* Main Footer Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {/* Column 1: Brand & Kitchen Hub */}
+            <div className="col-span-2 sm:col-span-1 space-y-3">
+              <Link to="/" className="flex items-center gap-2 group">
+                <Dumbbell className="h-6 w-6 text-[#D4FF00] group-hover:scale-110 transition-transform" />
+                <span className="font-display text-xl tracking-wide uppercase font-black text-white group-hover:text-[#D4FF00] transition-colors">
+                  Wheyo
+                </span>
+              </Link>
+              <p className="text-xs font-mono text-zinc-400 leading-relaxed">
+                The Protein Kitchen. High-protein fuel (35g–65g), subscriptions, and campus fitness league for collegiate athletes in Belagavi.
+              </p>
+              <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#D4FF00]/10 border border-[#D4FF00]/20 text-[10px] font-mono text-[#D4FF00] font-bold">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#D4FF00] animate-pulse" />
+                Tilakwadi Central Kitchen Active
               </div>
             </div>
+
+            {/* Column 2: Platform Links */}
+            <div className="space-y-3">
+              <div className="text-xs font-sans font-bold uppercase text-white tracking-wider">
+                Refuel & Train
+              </div>
+              <ul className="space-y-2 text-xs font-mono">
+                <li>
+                  <Link to="/workouts" className="hover:text-[#D4FF00] transition-colors">
+                    Workouts & Heatmap
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/" className="hover:text-[#D4FF00] transition-colors">
+                    Menu & Protein Bowls
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/subscriptions" className="hover:text-[#D4FF00] transition-colors">
+                    Meal Subscriptions
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/campus-league" className="hover:text-[#D4FF00] transition-colors">
+                    Belgaum Campus League
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Column 3: Kitchen & Story */}
+            <div className="space-y-3">
+              <div className="text-xs font-sans font-bold uppercase text-white tracking-wider">
+                Kitchen & Hub
+              </div>
+              <ul className="space-y-2 text-xs font-mono">
+                <li>
+                  <Link to="/about" className="hover:text-[#D4FF00] transition-colors">
+                    About Wheyo
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/faq" className="hover:text-[#D4FF00] transition-colors">
+                    Kitchen Standards & FAQ
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/contact" className="hover:text-[#D4FF00] transition-colors">
+                    Contact & Hub Support
+                  </Link>
+                </li>
+                <li>
+                  <a href="mailto:gyms@wheyo.fit" className="hover:text-[#D4FF00] transition-colors">
+                    Partner With Gyms
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Column 4: Trust & Policies */}
+            <div className="space-y-3">
+              <div className="text-xs font-sans font-bold uppercase text-white tracking-wider">
+                Trust & Terms
+              </div>
+              <ul className="space-y-2 text-xs font-mono">
+                <li>
+                  <Link to="/privacy" className="hover:text-[#D4FF00] transition-colors">
+                    Privacy Policy
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/terms" className="hover:text-[#D4FF00] transition-colors">
+                    Terms of Service
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/refunds" className="hover:text-[#D4FF00] transition-colors">
+                    Refunds & Cancellation
+                  </Link>
+                </li>
+                <li>
+                  <span className="text-zinc-500 text-[11px]">
+                    FSSAI Grade Kitchen Standards
+                  </span>
+                </li>
+              </ul>
+            </div>
           </div>
-        </footer>
-      )}
+
+          {/* Campus Badges Bar */}
+          <div className="border-t border-white/5 pt-6 flex flex-wrap items-center justify-between gap-3 text-[11px] font-mono text-zinc-400">
+            <div>
+              <strong className="text-white">Batch Delivery Corridors:</strong> KLS GIT · KLE Tech · JNMC Medics · VTU HQ · Jain College (1:00 PM & 8:00 PM Dispatches)
+            </div>
+            <div className="text-[#D4FF00] font-bold">
+              wheyo.xyz
+            </div>
+          </div>
+
+          {/* Sub Footer Bar */}
+          <div className="border-t border-white/5 pt-4 flex flex-col sm:flex-row justify-between items-center gap-3 text-center sm:text-left text-[10px] font-mono text-zinc-400">
+            <div>
+              &copy; {new Date().getFullYear()} Wheyo Technologies Pvt. Ltd. Central Kitchen: Tilakwadi, Belagavi 590006.
+            </div>
+            <div className="text-zinc-400">
+              Deterministic Workout Points · Zero AI Fluff · High-Volume Macro Kitchen
+            </div>
+          </div>
+        </div>
+      </footer>
       <CartDrawer />
+      <QuickCartPill />
       <AppTourModal session={session} />
     </div>
   );

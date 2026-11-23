@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wheyo — The Continuous Habit Blueprint</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090a0f;
+      --card-bg: #12141c;
+      --card-border: #222634;
+      --card-border-active: #ff5e1e;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --accent: #ff5e1e;
+      --accent-glow: rgba(255, 94, 30, 0.25);
+      --accent-yellow: #ffb800;
+      --green: #10b981;
+      --line-bg: #1e2330;
+      --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-code: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-main);
+      line-height: 1.6;
+      padding: 0;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Scroll progress indicator top */
+    #progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #ff5e1e, #ffb800);
+      width: 0%;
+      z-index: 1000;
+      transition: width 0.1s linear;
+    }
+
+    /* Header */
+    header {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 80px 24px 40px 24px;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      background: rgba(255, 94, 30, 0.1);
+      border: 1px solid rgba(255, 94, 30, 0.3);
+      color: var(--accent);
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      margin-bottom: 20px;
+      background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    p.subtitle {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      max-width: 680px;
+      margin: 0 auto 40px auto;
+    }
+
+    .summary-pills {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 30px;
+    }
+
+    .pill {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding: 10px 18px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pill span {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    /* Roadmap Container */
+    .roadmap-container {
+      max-width: 860px;
+      margin: 40px auto 120px auto;
+      position: relative;
+      padding: 0 24px;
+    }
+
+    /* Central vertical road line */
+    .road-line {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50px;
+      width: 4px;
+      background: var(--line-bg);
+      border-radius: 4px;
+      z-index: 1;
+    }
+
+    .road-line-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 0%;
+      background: linear-gradient(180deg, var(--accent) 0%, var(--accent-yellow) 100%);
+      border-radius: 4px;
+      transition: height 0.1s linear;
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+
+    @media (min-width: 768px) {
+      .road-line {
+        left: 50%;
+        transform: translateX(-50%);
+      }
+    }
+
+    /* Step Card */
+    .step-item {
+      position: relative;
+      margin-bottom: 60px;
+      z-index: 2;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .step-item.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Node Dot on the road */
+    .step-node {
+      position: absolute;
+      left: 50px;
+      top: 24px;
+      transform: translateX(-50%);
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 3px solid var(--line-bg);
+      transition: all 0.4s ease;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .step-node::after {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--line-bg);
+      transition: all 0.3s ease;
+    }
+
+    .step-item.visible .step-node {
+      border-color: var(--accent);
+      box-shadow: 0 0 16px var(--accent-glow);
+    }
+
+    .step-item.visible .step-node::after {
+      background: var(--accent);
+    }
+
+    @media (min-width: 768px) {
+      .step-node {
+        left: 50%;
+      }
+    }
+
+    /* Step Content Box */
+    .step-content {
+      margin-left: 85px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 28px;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .step-item.visible .step-content {
+      border-color: rgba(255, 94, 30, 0.3);
+    }
+
+    .step-content:hover {
+      border-color: var(--accent-glow);
+      box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+    }
+
+    @media (min-width: 768px) {
+      .step-item:nth-child(even) .step-content {
+        margin-left: 0;
+        margin-right: calc(50% + 35px);
+      }
+      .step-item:nth-child(odd) .step-content {
+        margin-left: calc(50% + 35px);
+        margin-right: 0;
+      }
+    }
+
+    /* Content Typography & Elements */
+    .step-tag {
+      font-family: var(--font-code);
+      font-size: 0.8rem;
+      color: var(--accent);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+
+    .step-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 12px;
+      line-height: 1.3;
+    }
+
+    .step-desc {
+      font-size: 0.98rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+
+    /* Key takeaway box */
+    .takeaway {
+      background: rgba(255, 255, 255, 0.03);
+      border-left: 3px solid var(--accent-yellow);
+      padding: 12px 16px;
+      border-radius: 0 8px 8px 0;
+      font-size: 0.88rem;
+      color: #e2e8f0;
+    }
+
+    .takeaway strong {
+      color: var(--accent-yellow);
+    }
+
+    /* Code/Formula snippet box */
+    .formula-box {
+      font-family: var(--font-code);
+      background: #090a0f;
+      border: 1px solid #1e2433;
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 0.85rem;
+      color: #38bdf8;
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .formula-box span {
+      color: #a7f3d0;
+    }
+
+    /* Final flywheel section */
+    .flywheel-section {
+      max-width: 860px;
+      margin: 60px auto;
+      padding: 0 24px;
+      text-align: center;
+    }
+
+    .flywheel-card {
+      background: linear-gradient(145deg, #151824 0%, #0d0e15 100%);
+      border: 1px solid var(--card-border-active);
+      border-radius: 24px;
+      padding: 40px 28px;
+      box-shadow: 0 20px 40px -15px rgba(255, 94, 30, 0.15);
+    }
+
+    .flywheel-title {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+      color: #fff;
+    }
+
+    .flywheel-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-top: 30px;
+      text-align: left;
+    }
+
+    .fly-step {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .fly-step-num {
+      font-family: var(--font-code);
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 0.85rem;
+      margin-bottom: 6px;
+    }
+
+    .fly-step-text {
+      font-size: 0.9rem;
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    footer {
+      text-align: center;
+      padding: 60px 24px;
+      border-top: 1px solid var(--card-border);
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="progress-bar"></div>
+
+  <header>
+    <div class="badge">Wheyo Product Philosophy</div>
+    <h1>How Wheyo Builds a Continuous Habit</h1>
+    <p class="subtitle">
+      No fluff. No complex UI. Just a direct link between the sweat in the gym and high-protein recovery meals on campus.
+    </p>
+
+    <div class="summary-pills">
+      <div class="pill">⚡ <span>Fast Logging</span> (Under 30 Seconds)</div>
+      <div class="pill">💰 <span>Real Value</span> (100 Pts = ₹10 off)</div>
+      <div class="pill">🍗 <span>Macro Fuel</span> (30g-50g Clean Protein)</div>
+    </div>
+  </header>
+
+  <main class="roadmap-container">
+    <div class="road-line">
+      <div class="road-line-fill" id="road-fill"></div>
+    </div>
+
+    <!-- Step 1 -->
+    <div class="step-item">
+      <div class="step-node"></div>
+      <div class="step-content">
+        <div class="step-tag">Phase 01 — The Friction Bottleneck</div>
+        <h2 class="step-title">Why fitness apps fail college athletes</h2>
+        <p class="step-desc">
+          Most fitness apps demand tedious manual input, counting raw grams of chicken, or staring at abstract charts that give zero immediate reward. People quit within 4 days because the feedback loop is too long.
+        </p>
+        <div class="takeaway">
+          <strong>Simple Truth:</strong> If tracking takes work and offers no immediate reward, people abandon it.
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step-item">
+      <div class="step-node"></div>
+      <div class="step-content">
+        <div class="step-tag">Phase 02 — Zero-Friction Logging</div>
+        <h2 class="step-title">1-Tap Workout Presets</h2>
+        <p class="step-desc">
+          Wheyo removes input pain. Pick preset routines (*Push Day, Pull Day, 5K Shred*) or search from 150+ exercises. Hit save, and your volume lifted and calories burned compute deterministically in real time.
+        </p>
+        <div class="formula-box">
+          <code>Workout logged</code> ➔ <span>Instant Calories & Tonnage calculated</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step-item">
+      <div class="step-node"></div>
+      <div class="step-content">
+        <div class="step-tag">Phase 03 — Instant Gratification</div>
+        <h2 class="step-title">Turn Sweat into Real Money</h2>
+        <p class="step-desc">
+          Instead of meaningless digital badges, every logged workout immediately converts into **Wheyo Points**. Every 100 Points gives ₹10 off real post-workout meals at checkout.
+        </p>
+        <div class="takeaway">
+          <strong>The Hook:</strong> Your gym effort literally pays for your protein dinner.
+        </div>
+        <div class="formula-box">
+          <code>100 Wheyo Points</code> ➔ <span>₹10 Real INR Food Discount</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="step-item">
+      <div class="step-node"></div>
+      <div class="step-content">
+        <div class="step-tag">Phase 04 — The Anabolic Window</div>
+        <h2 class="step-title">Targeted Macro Suggestions</h2>
+        <p class="step-desc">
+          The moment a workout finishes, Wheyo calculates your post-workout protein deficit. It directly suggests macro-dense food (Smoked Herb Chicken, Paneer Muscle Mash) tailored to your training intensity with 1-tap ordering.
+        </p>
+        <div class="takeaway">
+          <strong>Zero Thinking:</strong> You don't have to guess what to eat. The exact meal pops up right when you need it.
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 5 -->
+    <div class="step-item">
+      <div class="step-node"></div>
+      <div class="step-content">
+        <div class="step-tag">Phase 05 — Campus Rivalry & Identity</div>
+        <h2 class="step-title">The Belgaum Campus League</h2>
+        <p class="step-desc">
+          Athletes don't train in isolation. Every kg lifted and km run boosts your college’s leaderboard rank (KLE Tech, GIT, VTU, JNMC). Shareable Athlete Flex Passes tie personal fitness to campus pride.
+        </p>
+        <div class="takeaway">
+          <strong>Social Accountability:</strong> You log workouts because your campus rank depends on it.
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 6 -->
+    <div class="step-item">
+      <div class="step-node"></div>
+      <div class="step-content">
+        <div class="step-tag">Phase 06 — The Self-Sustaining Habit</div>
+        <h2 class="step-title">The Continuous Daily Flywheel</h2>
+        <p class="step-desc">
+          By connecting workout tracking with real post-workout food delivery, the habit loop completes naturally every single day without forcing willpower.
+        </p>
+        <div class="formula-box">
+          <code>Workout</code> ➔ <span>Points</span> ➔ <span>Discounted Meal</span> ➔ <span>Faster Recovery</span> ➔ <span>Repeat</span>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <section class="flywheel-section">
+    <div class="flywheel-card">
+      <h2 class="flywheel-title">The Wheyo Continuous Cycle</h2>
+      <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto;">
+        How everyday gym-goers turn temporary effort into a permanent lifestyle.
+      </p>
+
+      <div class="flywheel-steps">
+        <div class="fly-step">
+          <div class="fly-step-num">01. TRAIN</div>
+          <div class="fly-step-text">Log sets or cardio in 30s.</div>
+        </div>
+        <div class="fly-step">
+          <div class="fly-step-num">02. EARN</div>
+          <div class="fly-step-text">Instantly receive Wheyo Points.</div>
+        </div>
+        <div class="fly-step">
+          <div class="fly-step-num">03. REFUEL</div>
+          <div class="fly-step-text">Redeem points for high-protein meals.</div>
+        </div>
+        <div class="fly-step">
+          <div class="fly-step-num">04. RECOVER</div>
+          <div class="fly-step-text">Hit macro targets & hit campus league top.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Wheyo — Belgaum's 1st Cloud Protein Kitchen & Gamified Athlete Ecosystem.</p>
+    <p style="margin-top: 8px;">
+      <a href="./index.html">Return to App →</a>
+    </p>
+  </footer>
+
+  <script>
+    // Scroll progress bar top
+    const progressBar = document.getElementById('progress-bar');
+    const roadFill = document.getElementById('road-fill');
+    const roadmapContainer = document.querySelector('.roadmap-container');
+
+    function updateScrollProgress() {
+      const windowHeight = window.innerHeight;
+      const fullHeight = document.documentElement.scrollHeight - windowHeight;
+      const scrolled = window.scrollY;
+
+      // Top progress bar
+      if (fullHeight > 0) {
+        const progressPercentage = (scrolled / fullHeight) * 100;
+        progressBar.style.width = progressPercentage + '%';
+      }
+
+      // Vertical road fill calculation
+      if (roadmapContainer) {
+        const containerRect = roadmapContainer.getBoundingClientRect();
+        const containerTop = containerRect.top + window.scrollY;
+        const containerHeight = containerRect.height;
+        
+        // Calculate how far down the viewport center is relative to container
+        const scrollCenter = scrolled + (windowHeight / 2);
+        const relativeOffset = scrollCenter - containerTop;
+        
+        let fillPercentage = (relativeOffset / containerHeight) * 100;
+        fillPercentage = Math.max(0, Math.min(100, fillPercentage));
+        roadFill.style.height = fillPercentage + '%';
+      }
+    }
+
+    window.addEventListener('scroll', updateScrollProgress);
+    window.addEventListener('resize', updateScrollProgress);
+    updateScrollProgress();
+
+    // IntersectionObserver for scroll-revealing steps
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px 0px -15% 0px',
+      threshold: 0.15
+    };
+
+    const stepObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.step-item').forEach(step => {
+      stepObserver.observe(step);
+    });
+  </script>
+</body>
+</html>

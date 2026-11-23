@@ -7,3 +7,10 @@ coverage/
 .env*
 !.env.example
 react-native-upi-master/
+*.aux
+*.nav
+*.out
+*.snm
+*.toc
+slide_batch*.png
+

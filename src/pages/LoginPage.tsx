@@ -254,6 +254,90 @@ export default function LoginPage() {
               </h2>
             </div>
 
+            {/* Quick 1-Tap Demo Logins for Fast Feature Preview */}
+            <div className="p-3 bg-white/5 border border-[#D4FF00]/30 rounded-2xl space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-mono uppercase font-black text-[#D4FF00] tracking-wider flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#D4FF00] animate-pulse" />
+                  Quick Demo Preview
+                </span>
+                <span className="text-[9px] font-mono text-zinc-500 uppercase">1-Tap Bypass</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const mockUser = {
+                      id: 'demo-athlete-git',
+                      aud: 'authenticated',
+                      role: 'authenticated',
+                      email: 'athlete@wheyo.fit',
+                      user_metadata: {
+                        full_name: 'Aditya Patil (KLS GIT)',
+                        phone: '+919876543210'
+                      }
+                    };
+                    const mockSession = {
+                      access_token: 'mock-token',
+                      token_type: 'bearer',
+                      expires_in: 86400,
+                      refresh_token: 'mock-refresh',
+                      user: mockUser
+                    };
+                    localStorage.setItem('mock_session', JSON.stringify(mockSession));
+                    localStorage.setItem('customer_name', 'Aditya Patil (KLS GIT)');
+                    localStorage.setItem('customer_phone', '+919876543210');
+                    localStorage.setItem('wheyo-campus-id', 'git-belgaum');
+                    localStorage.setItem('user_segment', 'elite');
+                    localStorage.setItem('has_completed_intro', 'true');
+                    window.dispatchEvent(new Event('mock-auth-change'));
+                    triggerHaptic('success');
+                    navigate(returnTo);
+                  }}
+                  className="w-full py-2.5 px-2 bg-[#D4FF00]/15 hover:bg-[#D4FF00] text-[#D4FF00] hover:text-black border border-[#D4FF00]/40 rounded-xl font-mono text-[10px] font-black uppercase tracking-wider transition-all flex flex-col items-center justify-center gap-0.5"
+                >
+                  <span>⚡ Athlete Demo</span>
+                  <span className="text-[8px] opacity-75 font-normal">(KLS GIT Lifter)</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const mockUser = {
+                      id: 'demo-medic-jnmc',
+                      aud: 'authenticated',
+                      role: 'authenticated',
+                      email: 'medic@wheyo.fit',
+                      user_metadata: {
+                        full_name: 'Dr. Sneha Rao (JNMC)',
+                        phone: '+919812345678'
+                      }
+                    };
+                    const mockSession = {
+                      access_token: 'mock-token',
+                      token_type: 'bearer',
+                      expires_in: 86400,
+                      refresh_token: 'mock-refresh',
+                      user: mockUser
+                    };
+                    localStorage.setItem('mock_session', JSON.stringify(mockSession));
+                    localStorage.setItem('customer_name', 'Dr. Sneha Rao (JNMC)');
+                    localStorage.setItem('customer_phone', '+919812345678');
+                    localStorage.setItem('wheyo-campus-id', 'jnmc-belgaum');
+                    localStorage.setItem('user_segment', 'professional');
+                    localStorage.setItem('has_completed_intro', 'true');
+                    window.dispatchEvent(new Event('mock-auth-change'));
+                    triggerHaptic('success');
+                    navigate(returnTo);
+                  }}
+                  className="w-full py-2.5 px-2 bg-white/5 hover:bg-white text-zinc-300 hover:text-black border border-white/10 rounded-xl font-mono text-[10px] font-black uppercase tracking-wider transition-all flex flex-col items-center justify-center gap-0.5"
+                >
+                  <span>⚡ Medic Demo</span>
+                  <span className="text-[8px] opacity-75 font-normal">(JNMC Medics)</span>
+                </button>
+              </div>
+            </div>
+
             <form onSubmit={handleAuth} className="space-y-4">
               {isSignUp && (
                 <>

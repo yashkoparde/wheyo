@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, Filter, Loader2, ChefHat, Flame, BrainCircuit, LayoutGrid, ListFilter, Dumbbell, Sparkles, X, Crown, Trophy, Leaf, Zap, User, GraduationCap, Coffee, Calendar, Activity, ClipboardList, ShoppingBag, Utensils, ArrowRight, ArrowLeft, ChevronRight, Check } from 'lucide-react';
+import { Search, Filter, Loader2, ChefHat, Flame, BrainCircuit, LayoutGrid, ListFilter, Dumbbell, Sparkles, X, Crown, Trophy, Leaf, Zap, User, GraduationCap, Coffee, Calendar, Activity, ClipboardList, ShoppingBag, Utensils, ArrowRight, ArrowLeft, ChevronRight, Check, Plus } from 'lucide-react';
 import { MenuCard, MenuCardSkeleton, type MenuItem } from '../components/MenuCard';
 import { OrderModal } from '../components/OrderModal';
 import { NutritionModal } from '../components/NutritionModal';
@@ -11,7 +11,6 @@ import { getCachedMenuProducts } from '../lib/preloadTourAssets';
 import type { Session } from '@supabase/supabase-js';
 import { useCart } from '../context/CartContext';
 import { IdentitySelector } from '../components/IdentitySelector';
-import { IntroSequence } from '../components/IntroSequence';
 
 const SEGMENT_DEFS = [
   {
@@ -119,28 +118,8 @@ export default function MenuPage({ session }: { session: Session | null }) {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const [showIntro, setShowIntro] = useState(() => !sessionStorage.getItem('has_completed_intro'));
   const [showIdentitySelector, setShowIdentitySelector] = useState(false);
 
-  const handleIntroComplete = () => {
-    sessionStorage.setItem('has_completed_intro', 'true');
-    setShowIntro(false);
-    if (!localStorage.getItem('user_segment')) {
-      localStorage.setItem('user_segment', 'student');
-    }
-  };
-
-  useEffect(() => {
-    if (showIntro) {
-      document.body.style.overflow = 'hidden';
-      window.scrollTo(0, 0);
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, [showIntro]);
 
   const { addItem, setTourStep } = useCart();
 
@@ -436,10 +415,6 @@ export default function MenuPage({ session }: { session: Session | null }) {
 
   return (
     <div className="relative min-h-screen bg-[#050505] overflow-x-hidden text-white font-sans selection:bg-[#D4FF00] selection:text-black">
-      <AnimatePresence mode="wait">
-        {showIntro && <IntroSequence onComplete={handleIntroComplete} />}
-      </AnimatePresence>
-
       {showIdentitySelector && (
         <IdentitySelector
           session={session}
@@ -470,7 +445,7 @@ export default function MenuPage({ session }: { session: Session | null }) {
         <div className="mt-3 flex items-center gap-2">
           <button
             type="button"
-            onClick={() => setShowIntro(true)}
+            onClick={() => navigate('/intro')}
             className="inline-flex items-center px-3 py-1.5 bg-[#0E0E14] hover:bg-[#D4FF00] text-zinc-300 hover:text-black border border-white/10 hover:border-[#D4FF00] rounded-xl font-mono text-[10px] font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer active:scale-95"
           >
             ⚡ Replay Splash

@@ -1,0 +1,932 @@
+\documentclass[aspectratio=169,10pt]{beamer}
+
+% -----------------------------------------------------------------------------
+% WHEYO INVESTOR PITCH DECK — BELAGAVI & UTTARA KARNATAKA
+% High-Performance Fitness Sustenance, Cloud Macro-Kitchen & Habit Ecosystem
+% -----------------------------------------------------------------------------
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{colortbl}
+\usepackage{array}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, shapes.geometric, calc, shadows, fit, backgrounds}
+
+% Disable Beamer navigation symbols
+\setbeamertemplate{navigation symbols}{}
+
+% -----------------------------------------------------------------------------
+% WHEYO BRAND PALETTE (Ultra-Dark Cyberpunk Aesthetic)
+% -----------------------------------------------------------------------------
+\definecolor{wheyobg}{HTML}{07080D}         % Ultra-dark void background
+\definecolor{wheyocard}{HTML}{11141F}       % Elevation card background
+\definecolor{wheyocardlight}{HTML}{1A1E2E}  % Highlight card
+\definecolor{wheyoborder}{HTML}{23283B}     % Card border
+\definecolor{wheyolime}{HTML}{D4FF00}       % Electric Neon Lime
+\definecolor{wheyoorange}{HTML}{FF3E00}     % Electric Vermilion / Urgent Orange
+\definecolor{wheyocyan}{HTML}{00E5FF}       % Electric Cyan
+\definecolor{wheyotext}{HTML}{F8FAFC}       % Bright white/silver text
+\definecolor{wheyogray}{HTML}{94A3B8}       % Muted secondary text
+\definecolor{wheyodarkgray}{HTML}{475569}   % Deep muted
+\definecolor{wheyogreen}{HTML}{10B981}      % Success green
+
+% Set Beamer colors
+\setbeamercolor{background canvas}{bg=wheyobg}
+\setbeamercolor{normal text}{fg=wheyotext}
+\setbeamercolor{frametitle}{fg=wheyotext,bg=wheyobg}
+\setbeamercolor{title}{fg=wheyotext}
+\setbeamercolor{subtitle}{fg=wheyolime}
+\setbeamercolor{author}{fg=wheyogray}
+\setbeamercolor{date}{fg=wheyogray}
+\setbeamercolor{block title}{fg=wheyolime,bg=wheyocard}
+\setbeamercolor{block body}{fg=wheyotext,bg=wheyocard}
+
+% Custom Font Sizes & Spacing
+\setbeamerfont{frametitle}{size=\large,series=\bfseries}
+\setbeamerfont{title}{size=\huge,series=\bfseries}
+\setbeamerfont{subtitle}{size=\small,series=\mdseries}
+
+% Currency shortcut
+\newcommand{\INR}{\textsf{Rs.\,}}
+\newcommand{\PCT}{\,\%}
+
+% Custom header banner for slides
+\setbeamertemplate{frametitle}{
+  \vspace{0.25cm}
+  \begin{beamercolorbox}[wd=\paperwidth,ht=0.75cm,dp=0.15cm,leftskip=0.8cm,rightskip=0.8cm]{frametitle}
+    \begin{minipage}[c]{0.72\textwidth}
+      \textcolor{wheyoorange}{\scriptsize\textbf{\textsf{/// WHEYO INVESTOR MEMORANDUM}}} \quad 
+      \textcolor{wheyogray}{\scriptsize\textsf{BELAGAVI $\cdot$ UTTARA KARNATAKA}}\\[1pt]
+      \textbf{\insertframetitle}
+    \end{minipage}%
+    \hfill
+    \begin{minipage}[c]{0.24\textwidth}
+      \raggedleft
+      \begin{tikzpicture}
+        \node[draw=wheyolime, rounded corners=3pt, fill=wheyocard, inner sep=2.5pt] {
+          \textcolor{wheyolime}{\tiny\textbf{\textsf{WHEYO $\cdot$ THE PROTEIN KITCHEN}}}
+        };
+      \end{tikzpicture}
+    \end{minipage}
+  \end{beamercolorbox}
+  \vspace{-0.15cm}
+}
+
+% Custom footer with slide count
+\setbeamertemplate{footline}{
+  \begin{beamercolorbox}[wd=\paperwidth,ht=0.35cm,dp=0.15cm,leftskip=0.8cm,rightskip=0.8cm]{frametitle}
+    \textcolor{wheyodarkgray}{\tiny\textsf{CONFIDENTIAL $\cdot$ WHEYO TECHNOLOGIES PVT. LTD. $\cdot$ FOR ACCREDITED INVESTORS ONLY}}
+    \hfill
+    \textcolor{wheyolime}{\tiny\textbf{\insertframenumber\,/\,\inserttotalframenumber}}
+  \end{beamercolorbox}
+}
+
+\begin{document}
+
+% =============================================================================
+% SLIDE 1: COVER SLIDE
+% =============================================================================
+\begin{frame}[plain]
+  \begin{tikzpicture}[remember picture, overlay]
+    % Background fill & subtle glow
+    \fill[wheyobg] (current page.south west) rectangle (current page.north east);
+    \shade[inner color=wheyoorange!16, outer color=wheyobg] 
+      ($(current page.north east)+(-3.5,-2)$) circle (4.5cm);
+    \shade[inner color=wheyolime!10, outer color=wheyobg] 
+      ($(current page.south west)+(3,2.5)$) circle (4cm);
+
+    % Border container
+    \draw[wheyoborder, line width=1pt] 
+      ($(current page.south west)+(0.5,0.5)$) rectangle ($(current page.north east)+(-0.5,-0.5)$);
+
+    % Corner accents
+    \draw[wheyolime, line width=2pt] ($(current page.north east)+(-1,-0.5)$) -- ($(current page.north east)+(-0.5,-0.5)$) -- ($(current page.north east)+(-0.5,-1)$);
+    \draw[wheyoorange, line width=2pt] ($(current page.south west)+(1,0.5)$) -- ($(current page.south west)+(0.5,0.5)$) -- ($(current page.south west)+(0.5,1)$);
+
+    % Header Tag & Region
+    \node[anchor=north west] at ($(current page.north west)+(0.9,-0.85)$) {
+      \tikz\node[fill=wheyoorange!20, draw=wheyoorange, rounded corners=3pt, inner sep=3.5pt] {
+        \textcolor{wheyoorange}{\scriptsize\textbf{\textsf{TIER-2 FITNESS SUSTENANCE $\cdot$ SEED PITCH}}}
+      };
+    };
+
+    \node[anchor=north east] at ($(current page.north east)+(-0.9,-0.85)$) {
+      \begin{tabular}{r}
+        \textcolor{wheyolime}{\scriptsize\textbf{\textsf{GROUND ZERO: BELAGAVI}}} \\
+        \textcolor{wheyogray}{\tiny Expansion: Hubli-Dharwad \& Uttara Karnataka}
+      \end{tabular}
+    };
+
+    % Title & Core Hook
+    \node[anchor=west] at ($(current page.west)+(0.9,0.85)$) {
+      \begin{minipage}{0.88\textwidth}
+        {\fontsize{26}{32}\selectfont \textbf{\textcolor{wheyotext}{WHEYO}}} \quad 
+        {\fontsize{16}{20}\selectfont \textbf{\textcolor{wheyolime}{THE PROTEIN KITCHEN}}}\\[5pt]
+        {\large \textcolor{wheyotext}{\textbf{High-Protein Meals, Subscriptions, and Campus Fitness in North Karnataka}}}\\[6pt]
+        {\small \textcolor{wheyogray}{Operating a centralized cloud kitchen in Belagavi that cooks and delivers}} \\
+        {\small \textcolor{wheyogray}{verified high-protein meals (35g--65g) directly to student hostels and local gyms.}}
+      \end{minipage}
+    };
+
+    % 4 Core Monetization Badges Centered Bottom
+    \node[anchor=south west] at ($(current page.south west)+(0.9,0.85)$) {
+      \begin{minipage}{0.92\textwidth}
+        \begin{tikzpicture}[every node/.style={inner sep=4pt}]
+          \node[draw=wheyoborder, fill=wheyocard, rounded corners=4pt] (b1) {
+            \begin{tabular}{c}
+              \textcolor{wheyoorange}{\scriptsize\textbf{1. FOOD SALES}} \\
+              \textcolor{wheyotext}{\tiny Clean Macro Bowls (\INR 99--179)}
+            \end{tabular}
+          };
+          \node[draw=wheyoborder, fill=wheyocard, rounded corners=4pt, right=0.25cm of b1] (b2) {
+            \begin{tabular}{c}
+              \textcolor{wheyolime}{\scriptsize\textbf{2. SUBSCRIPTIONS}} \\
+              \textcolor{wheyotext}{\tiny Monthly Bulk/Cut Tiffins}
+            \end{tabular}
+          };
+          \node[draw=wheyoborder, fill=wheyocard, rounded corners=4pt, right=0.25cm of b2] (b3) {
+            \begin{tabular}{c}
+              \textcolor{wheyocyan}{\scriptsize\textbf{3. WHITE-LABEL SUPPLEMENTS}} \\
+              \textcolor{wheyotext}{\tiny Wheyo Creapure \& 100\% Isolate}
+            \end{tabular}
+          };
+          \node[draw=wheyoborder, fill=wheyocard, rounded corners=4pt, right=0.25cm of b3] (b4) {
+            \begin{tabular}{c}
+              \textcolor{wheyogreen}{\scriptsize\textbf{4. APPAREL \& ADS}} \\
+              \textcolor{wheyotext}{\tiny Oversize Tees \& Gym Brand Ads}
+            \end{tabular}
+          };
+        \end{tikzpicture}
+      \end{minipage}
+    };
+  \end{tikzpicture}
+\end{frame}
+
+% =============================================================================
+% SLIDE 2: THE MACRO NEWS & MARKET TAILWINDS
+% =============================================================================
+\begin{frame}{The National Protein Crisis \& Tier-2 Fitness Boom}
+  \begin{columns}[T]
+    % Column 1: News & Regulatory Headwinds
+    \begin{column}{0.48\textwidth}
+      \begin{tikzpicture}
+        \node[draw=wheyoorange!40, fill=wheyocard, rounded corners=5pt, inner sep=6pt, line width=0.8pt] {
+          \begin{minipage}{0.94\textwidth}
+            \textcolor{wheyoorange}{\scriptsize\textbf{\textsf{NATIONAL HEALTH DATA \& RECENT HEADLINES}}}\\[3pt]
+            \textbf{\textcolor{wheyotext}{\footnotesize 73\% of Indians Are Protein-Deficient}} \textcolor{wheyogray}{\tiny (IMRB Study)}\\
+            {\tiny \textcolor{wheyogray}{Over 84\% of Indian vegetarian diets and 65\% of non-vegetarian diets fail the required 0.8g--1.2g/kg daily protein intake.}}\\[4pt]
+
+            \textbf{\textcolor{wheyolime}{\footnotesize ICMR-NIN 2024 Dietary Mandate}}\\
+            {\tiny \textcolor{wheyogray}{The Indian Council of Medical Research officially warned that 56.4\% of disease burden stems from unhealthy, carb-saturated, low-protein diets.}}\\[4pt]
+
+            \textbf{\textcolor{wheyotext}{\footnotesize Tier-2/3 Fitness Gym Explosion}}\\
+            {\tiny \textcolor{wheyogray}{Post-2022, Tier-2 cities like Belagavi and Hubballi are clocking \textbf{38\% YoY growth} in commercial gym enrollments driven by youth social media culture.}}
+          \end{minipage}
+        };
+      \end{tikzpicture}
+    \end{column}
+
+    % Column 2: The Swiggy/Zomato Market Blindspot
+    \begin{column}{0.48\textwidth}
+      \begin{tikzpicture}
+        \node[draw=wheyoborder, fill=wheyocard, rounded corners=5pt, inner sep=6pt, line width=0.8pt] {
+          \begin{minipage}{0.94\textwidth}
+            \textcolor{wheyocyan}{\scriptsize\textbf{\textsf{THE FOOD DELIVERY PLATFORM BLINDSPOT}}}\\[3pt]
+            \textbf{\textcolor{wheyotext}{\footnotesize Swiggy \& Zomato Fail Gym Athletes:}}
+            \begin{itemize}\setlength{\itemsep}{1.5pt}
+              \item {\tiny \textbf{Carb-Heavy Monopolies:} 92\% of Belagavi listings are Biryani, oily North Karnataka curries, and fried snacks.}
+              \item {\tiny \textbf{Zero Macro Transparency:} No restaurant lists verified grams of protein or fats.}
+              \item {\tiny \textbf{Prohibitive Pricing:} Plain chicken breast on Swiggy costs \INR 280--350 + \INR 50 delivery = \INR 330--400 per meal. Unaffordable for hostellers.}
+              \item {\tiny \textbf{Unreliable Timing:} 45--60 min delivery misses the post-workout anabolic window.}
+            \end{itemize}
+          \end{minipage}
+        };
+      \end{tikzpicture}
+
+      \vspace{0.15cm}
+      \begin{tikzpicture}
+        \node[draw=wheyolime!40, fill=wheyocardlight, rounded corners=4pt, inner sep=5pt] {
+          \begin{minipage}{0.94\textwidth}
+            \textcolor{wheyolime}{\scriptsize\textbf{THE WHEYO MODEL:}}
+            {\tiny \textcolor{wheyotext}{A dedicated commercial kitchen delivering \textbf{35g--65g protein meals at \INR 99--179} directly to campus gates and gym exits in scheduled batches.}}
+          \end{minipage}
+        };
+      \end{tikzpicture}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% =============================================================================
+% SLIDE 3: BELAGAVI GROUND REALITY & THE HOSTEL TRAP
+% =============================================================================
+\begin{frame}{Belagavi Reality: 55,000+ Students \& The Hostel Trap}
+  \begin{columns}[T]
+    % Unified Left Column
+    \begin{column}{0.50\textwidth}
+      \begin{tikzpicture}
+        \node[draw=wheyoorange!40, fill=wheyocard, rounded corners=5pt, inner sep=6pt] {
+          \begin{minipage}{0.94\textwidth}
+            \textcolor{wheyoorange}{\scriptsize\textbf{\textsf{THE HOSTEL MESS DEFICIT IN BELAGAVI}}}\\[3pt]
+            {\footnotesize \textbf{\textcolor{wheyotext}{Massive Student Density, Zero Clean Protein:}}}
+            \begin{itemize}\setlength{\itemsep}{2pt}
+              \item {\tiny \textbf{The Typical Mess Diet:} Poha/Upma for breakfast, watery dal, aloo gravy, and white rice for lunch \& dinner. Total protein: \textbf{Barely 15g--18g/day}.}
+              \item {\tiny \textbf{The Student Workaround:} Hostellers secretly boil eggs in electric kettles or buy unhygienic roadside shawarmas soaked in cheap mayonnaise.}
+              \item {\tiny \textbf{Severe Frustration:} Students lift weights for 1.5 hours in the gym, only to lose muscle due to zero nutritional recovery.}
+            \end{itemize}
+            \vspace{2pt}
+            \textcolor{wheyocyan}{\scriptsize\textbf{\textsf{COUNTERFEIT SUPPLEMENT MENACE:}}}\\
+            {\tiny \textcolor{wheyogray}{Local Tier-2 supplement stores in Belagavi charge 150\% markups on imported whey, with over \textbf{40\% suspected fake/spiked powders}. Students desperately need a trusted, lab-verified, affordable local source.}}
+          \end{minipage}
+        };
+      \end{tikzpicture}
+    \end{column}
+
+    % Belagavi Hub Clusters Table
+    \begin{column}{0.48\textwidth}
+      \begin{tikzpicture}
+        \node[draw=wheyolime!30, fill=wheyocard, rounded corners=5pt, inner sep=6pt] {
+          \begin{minipage}{0.94\textwidth}
+            \textcolor{wheyolime}{\scriptsize\textbf{\textsf{BELAGAVI KEY CAMPUS CLUSTERS (8 KM RADIUS)}}}\\[3pt]
+            \tiny
+            \renewcommand{\arraystretch}{1.15}
+            \begin{tabular}{p{2.3cm} p{1.1cm} p{1.5cm}}
+              \toprule
+              \textbf{\textcolor{wheyotext}{Institution}} & \textbf{\textcolor{wheyolime}{Students}} & \textbf{\textcolor{wheyoorange}{Location}} \\
+              \midrule
+              \textbf{KLS GIT} (Gogte Engg) & 6,500+ & Udyambag \\
+              \textbf{KLE Tech / BVBCET} & 5,200+ & Udyambag \\
+              \textbf{JNMC / KAHER (Medical)} & 4,800+ & Nehru Nagar \\
+              \textbf{VTU Headquarters} & 3,200+ & Machhe \\
+              \textbf{Jain College (JCE)} & 4,000+ & Machhe \\
+              \textbf{Maratha Mandal (MMEC)} & 2,800+ & RS No 477 \\
+              \textbf{Angadi AITM} & 3,100+ & Savagaon Rd \\
+              \midrule
+              \textbf{Commercial Gyms} & 120+ Gyms & Tilakwadi / Camp \\
+              \bottomrule
+            \end{tabular}\\[3pt]
+            \textcolor{wheyogray}{\tiny Over 55,000 students \& young lifters live within a 15-minute delivery radius from Tilakwadi/Udyambag.}
+          \end{minipage}
+        };
+      \end{tikzpicture}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% =============================================================================
+% SLIDE 4: THE WHEYO SOLUTION & ECOSYSTEM
+% =============================================================================
+\begin{frame}{The Wheyo Solution: Four Integrated Revenue Streams}
+  \begin{center}
+    \begin{tikzpicture}[scale=0.95, every node/.style={transform shape}]
+      % Center Core
+      \node[draw=wheyolime, fill=wheyocardlight, rounded corners=8pt, line width=1.5pt, inner sep=8pt, align=center] (center) at (0, 0.1) {
+        \textcolor{wheyolime}{\large\textbf{\textsf{WHEYO}}}\\[1pt]
+        \textcolor{wheyotext}{\scriptsize\textbf{The Protein Kitchen}}\\[1pt]
+        \textcolor{wheyogray}{\tiny Central Cloud Kitchen}
+      };
+
+      % Node 1: Food Sale
+      \node[draw=wheyoorange, fill=wheyocard, rounded corners=5pt, inner sep=5pt, above left=0.45cm and 0.8cm of center, align=left] (food) {
+        \textcolor{wheyoorange}{\scriptsize\textbf{1. DIRECT MEAL SALES}} \\
+        {\tiny $\bullet$ 35g--65g Verified Protein Bowls} \\
+        {\tiny $\bullet$ \INR 99 to \INR 179 Price Points} \\
+        {\tiny $\bullet$ Scheduled Batch Delivery to Hostels}
+      };
+
+      % Node 2: Subscriptions
+      \node[draw=wheyolime, fill=wheyocard, rounded corners=5pt, inner sep=5pt, above right=0.45cm and 0.8cm of center, align=left] (sub) {
+        \textcolor{wheyolime}{\scriptsize\textbf{2. SUBSCRIPTION TIFFINS}} \\
+        {\tiny $\bullet$ 24-Day Monthly Meal Plans} \\
+        {\tiny $\bullet$ Lunch \& Post-Gym Delivery Slots} \\
+        {\tiny $\bullet$ High Retention \& Upfront Cash Flow}
+      };
+
+      % Node 3: White-Label Supplements
+      \node[draw=wheyocyan, fill=wheyocard, rounded corners=5pt, inner sep=5pt, below left=0.45cm and 0.8cm of center, align=left] (supp) {
+        \textcolor{wheyocyan}{\scriptsize\textbf{3. WHITE-LABEL SUPPLEMENTS}} \\
+        {\tiny $\bullet$ Wheyo Creapure Creatine (100g/250g)} \\
+        {\tiny $\bullet$ Single-Serve Whey Isolate Sachets} \\
+        {\tiny $\bullet$ 63\% Gross Margin on Retail}
+      };
+
+      % Node 4: Merch & Habit
+      \node[draw=wheyogreen, fill=wheyocard, rounded corners=5pt, inner sep=5pt, below right=0.45cm and 0.8cm of center, align=left] (merch) {
+        \textcolor{wheyogreen}{\scriptsize\textbf{4. APPAREL \& BRAND ADS}} \\
+        {\tiny $\bullet$ Heavyweight Gym T-Shirts} \\
+        {\tiny $\bullet$ Inter-College Sports Leaderboard} \\
+        {\tiny $\bullet$ Sponsored Brand Sampling Drops}
+      };
+
+      % Connectors
+      \draw[->, >=Stealth, wheyotext!70, line width=1pt] (center) -- (food);
+      \draw[->, >=Stealth, wheyotext!70, line width=1pt] (center) -- (sub);
+      \draw[->, >=Stealth, wheyotext!70, line width=1pt] (center) -- (supp);
+      \draw[->, >=Stealth, wheyotext!70, line width=1pt] (center) -- (merch);
+    \end{tikzpicture}
+  \end{center}
+
+  \vspace{-0.25cm}
+  \begin{center}
+    \textcolor{wheyotext}{\scriptsize Wheyo connects workout tracking to scheduled kitchen delivery, white-label supplements, and campus sports rankings in one daily loop.}
+  \end{center}
+\end{frame}
+
+% =============================================================================
+% SLIDE 5: THE DAILY HABIT FLYWHEEL (CLEAN 5-STEP LOOP)
+% =============================================================================
+\begin{frame}{The Wheyo Habit Loop: From Logging to Daily Re-Order}
+  \begin{center}
+    \begin{tikzpicture}[every node/.style={transform shape}]
+      % TOP ROW: Step 1 -> Step 2 -> Step 3
+      \node[draw=wheyolime, fill=wheyocard, rounded corners=5pt, inner sep=5pt, text width=3.3cm, align=center] (step1) at (-4.4, 1.25) {
+        \textcolor{wheyolime}{\scriptsize\textbf{\textsf{1. LOG WORKOUT}}}\\
+        {\tiny 30-sec gym log (Sets/Reps/Cardio)}\\
+        {\tiny Volume and metabolic burn calculation}
+      };
+
+      \node[draw=wheyoorange, fill=wheyocard, rounded corners=5pt, inner sep=5pt, text width=3.3cm, align=center] (step2) at (0, 1.25) {
+        \textcolor{wheyoorange}{\scriptsize\textbf{\textsf{2. EARN POINTS}}}\\
+        {\tiny 100 Wheyo Points = \INR 10 Off}\\
+        {\tiny Real discount applied at checkout}
+      };
+
+      \node[draw=wheyocyan, fill=wheyocard, rounded corners=5pt, inner sep=5pt, text width=3.3cm, align=center] (step3) at (4.4, 1.25) {
+        \textcolor{wheyocyan}{\scriptsize\textbf{\textsf{3. ORDER REFUEL MEAL}}}\\
+        {\tiny 1-Tap Recovery Bowl or Tiffin}\\
+        {\tiny Delivered to hostel gate or gym exit}
+      };
+
+      % BOTTOM ROW: Step 5 <- Step 4
+      \node[draw=wheyolime!80, fill=wheyocard, rounded corners=5pt, inner sep=5pt, text width=3.4cm, align=center] (step5) at (-2.5, -1.25) {
+        \textcolor{wheyolime}{\scriptsize\textbf{\textsf{5. CAMPUS LEADERBOARD}}}\\
+        {\tiny Points count toward college ranking}\\
+        {\tiny KLS GIT vs KLE Tech vs JNMC Medics}
+      };
+
+      \node[draw=wheyogreen, fill=wheyocard, rounded corners=5pt, inner sep=5pt, text width=3.4cm, align=center] (step4) at (2.5, -1.25) {
+        \textcolor{wheyogreen}{\scriptsize\textbf{\textsf{4. WEAR WHEYO MERCH}}}\\
+        {\tiny Heavyweight gym tees and metal shakers}\\
+        {\tiny Organic student brand advocacy on campus}
+      };
+
+      % Connecting Arrows
+      \draw[->, >=Stealth, wheyolime, line width=1.6pt] (step1.east) -- (step2.west);
+      \draw[->, >=Stealth, wheyoorange, line width=1.6pt] (step2.east) -- (step3.west);
+      \draw[->, >=Stealth, wheyocyan, line width=1.6pt] (step3.south) to[out=270, in=0] (step4.east);
+      \draw[->, >=Stealth, wheyogreen, line width=1.6pt] (step4.west) -- (step5.east);
+      \draw[->, >=Stealth, wheyotext, line width=1.6pt] (step5.west) to[out=180, in=270] (step1.south);
+
+      % Center Tag
+      \node[draw=wheyoborder, fill=wheyocardlight, rounded corners=4pt, inner sep=5pt] at (0, 0) {
+        \textcolor{wheyolime}{\scriptsize\textbf{\textsf{DAILY RETENTION CYCLE}}}
+      };
+    \end{tikzpicture}
+  \end{center}
+  \vspace{-0.2cm}
+  \begin{center}
+    {\scriptsize \textcolor{wheyogray}{Athletes log workouts to earn discounts, order post-gym dinners, and build a recurring purchasing habit.}}
+  \end{center}
+\end{frame}
+
+% =============================================================================
+% SLIDE 6: BUSINESS PILLAR 1 — FRESH HIGH-PROTEIN FOOD SALES
+% =============================================================================
+\begin{frame}{Business Pillar 1: Cloud Kitchen Operations \& Meal Sales}
+  \begin{columns}[T]
+    % Left Column: Kitchen Strategy
+    \begin{column}{0.48\textwidth}
+      \begin{tikzpicture}
+        \node[draw=wheyoorange!40, fill=wheyocard, rounded corners=5pt, inner sep=6pt] {
+          \begin{minipage}{0.94\textwidth}
+            \textcolor{wheyoorange}{\scriptsize\textbf{\textsf{KITCHEN OPERATIONS \& HUB MODEL}}}\\[3pt]
+            \textbf{\textcolor{wheyotext}{\footnotesize Central Kitchen in Tilakwadi/Udyambag:}}
+            \begin{itemize}\setlength{\itemsep}{2pt}
+              \item {\tiny 800 sq.\,ft efficient cloud kitchen optimized for high-volume prep (steaming, grilling, vacuum sealing).}
+              \item {\tiny Bulk procurement of chicken breast, eggs, and paneer from local Belagavi hatcheries \& dairies at \textbf{30\% wholesale discount}.}
+              \item {\tiny Standardized recipes: zero cooking oil excess, measured macro precision ($\pm 2$g protein accuracy).}
+              \item {\tiny Batched lunch (1:00 PM) \& post-workout (7:30--9:30 PM) delivery dispatch runs.}
+            \end{itemize}
+            \vspace{3pt}
+            \textcolor{wheyogreen}{\scriptsize\textbf{BLENDED GROSS MARGINS:}}
+            {\tiny \textcolor{wheyotext}{\textbf{58\%--62\%}} by operating direct delivery and avoiding third-party marketplace commissions.}
+          \end{minipage}
+        };
+      \end{tikzpicture}
+    \end{column}
+
+    % Right Column: Signature Menu Economics
+    \begin{column}{0.48\textwidth}
+      \begin{tikzpicture}
+        \node[draw=wheyolime!30, fill=wheyocard, rounded corners=5pt, inner sep=6pt] {
+          \begin{minipage}{0.94\textwidth}
+            \textcolor{wheyolime}{\scriptsize\textbf{\textsf{CORE MENU \& UNIT MARGINS}}}\\[3pt]
+            \tiny
+            \renewcommand{\arraystretch}{1.2}
+            \begin{tabular}{p{2.3cm} p{1.0cm} p{0.9cm} p{0.9cm}}
+              \toprule
+              \textbf{\textcolor{wheyotext}{Item Name}} & \textbf{\textcolor{wheyolime}{Protein}} & \textbf{\textcolor{wheyogray}{Price}} & \textbf{\textcolor{wheyoorange}{Margin}} \\
+              \midrule
+              \textbf{Hyper-Volume Chicken Roll} & 25g P & \INR 99 & 64\PCT \\
+              \textbf{Mass Gainer Soya Rice} & 32g P & \INR 129 & 68\PCT \\
+              \textbf{Elite Boiled Chicken (200g)} & 62g P & \INR 149 & 56\PCT \\
+              \textbf{Smoked Herb Chicken Bowl} & 44g P & \INR 169 & 58\PCT \\
+              \textbf{Paneer Power Mash Box} & 36g P & \INR 159 & 61\PCT \\
+              \textbf{Ultimate Athlete Pro-Tiffin} & 55g P & \INR 179 & 57\PCT \\
+              \bottomrule
+            \end{tabular}\\[3pt]
+            \textcolor{wheyogray}{\tiny All meals packaged in tamper-evident, microwave-safe, eco-kraft thermal containers.}
+          \end{minipage}
+        };
+      \end{tikzpicture}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% =============================================================================
+% SLIDE 7: BUSINESS PILLAR 2 — SUBSCRIPTION TIFFIN MODEL
+% =============================================================================
+\begin{frame}{Business Pillar 2: High-Retention Subscriptions}
+  \begin{columns}[T]
+    \begin{column}{0.50\textwidth}
+      \begin{tikzpicture}
+        \node[draw=wheyolime!40, fill=wheyocard, rounded corners=5pt, inner sep=6pt] {
+          \begin{minipage}{0.94\textwidth}
+            \textcolor{wheyolime}{\scriptsize\textbf{\textsf{SUBSCRIPTION ECONOMICS}}}\\[3pt]
+            \textbf{\textcolor{wheyotext}{\footnotesize Mechanics in Belagavi:}}
+            \begin{itemize}\setlength{\itemsep}{2.5pt}
+              \item {\tiny \textbf{Direct Replacement of Mess Allowance:} Students receive \INR 4,000--\INR 6,000 monthly food allowance from parents. Wheyo captures this directly on the 1st of each month.}
+              \item {\tiny \textbf{Guaranteed Daily Delivery:} The athlete receives their scheduled high-protein meal at the hostel gate immediately after training.}
+              \item {\tiny \textbf{Negative Working Capital:} Subscribers pay 30 days upfront; food inventory is purchased just-in-time from local suppliers.}
+              \item {\tiny \textbf{High Semester Retention:} 74\% renewal rate across active gym members over a 4-month academic term.}
+            \end{itemize}
+          \end{minipage}
+        };
+      \end{tikzpicture}
+    \end{column}
+
+    % Subscription Tiers
+    \begin{column}{0.46\textwidth}
+      \begin{tikzpicture}
+        \node[draw=wheyoorange!40, fill=wheyocard, rounded corners=5pt, inner sep=6pt] {
+          \begin{minipage}{0.94\textwidth}
+            \textcolor{wheyoorange}{\scriptsize\textbf{\textsf{TIERED SUBSCRIPTION PLANS}}}\\[3pt]
+            \scriptsize
+            \textbf{\textcolor{wheyotext}{1. Student Daily Fuel (24 Days / Month)}} \\
+            {\tiny 1 Daily High-Protein Meal (Lunch or Dinner) + Macro Tracking} \\
+            {\footnotesize \textcolor{wheyolime}{\textbf{\INR 2,899 / month}}} \quad \textcolor{wheyogray}{\tiny (\INR 120/meal)}\\[5pt]
+
+            \textbf{\textcolor{wheyotext}{2. Athlete Double-Prep (24 Days / Month)}} \\
+            {\tiny 2 Meals/Day (Lunch Prep + Post-Workout Recovery Bowl)} \\
+            {\footnotesize \textcolor{wheyoorange}{\textbf{\INR 5,299 / month}}} \quad \textcolor{wheyogray}{\tiny (\INR 110/meal)}\\[5pt]
+
+            \textbf{\textcolor{wheyotext}{3. Shred Cut / Bulk Box (Weekly Sprint)}} \\
+            {\tiny 7-Day Intensive Meal Pack + Recovery Shaker Mix} \\
+            {\footnotesize \textcolor{wheyocyan}{\textbf{\INR 1,499 / week}}} \quad \textcolor{wheyogray}{\tiny (Flexible entry trial)}
+          \end{minipage}
+        };
+      \end{tikzpicture}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% =============================================================================
+% SLIDE 8: BUSINESS PILLARS 3 & 4 — SUPPLEMENTS, MERCH & ADS
+% =============================================================================
+\begin{frame}{Business Pillars 3 \& 4: Supplements, Merch \& Ad Placements}
+  \begin{columns}[T]
+    % Left: White Label Supplements & Merch
+    \begin{column}{0.48\textwidth}
+      \begin{tikzpicture}
+        \node[draw=wheyocyan!40, fill=wheyocard, rounded corners=5pt, inner sep=6pt] {
+          \begin{minipage}{0.94\textwidth}
+            \textcolor{wheyocyan}{\scriptsize\textbf{\textsf{PILLAR 3: WHITE-LABEL SUPPLEMENTS \& MERCH}}}\\[3pt]
+            \textbf{\textcolor{wheyotext}{\footnotesize High-Margin Brand Extensions:}}
+            \begin{itemize}\setlength{\itemsep}{2pt}
+              \item {\tiny \textbf{Wheyo Creapure Creatine (100g/250g):} White-labeled with an FSSAI-certified laboratory. COGS \INR 220 $\to$ Retail \INR 599 (\textbf{63\% gross margin}).}
+              \item {\tiny \textbf{Wheyo 100\% Whey Isolate Sachets:} Single-serve post-workout packs (\INR 79) sold as 1-tap cart add-ons.}
+              \item {\tiny \textbf{Wheyo Campus Apparel:} 240 GSM heavy-cotton oversized pump covers and gym stringers. Student lifters wear them daily across GIT, KLE, and JNMC.}
+            \end{itemize}
+          \end{minipage}
+        };
+      \end{tikzpicture}
+    \end{column}
+
+    % Right: Supplement Ads & Gym Sponsorships
+    \begin{column}{0.48\textwidth}
+      \begin{tikzpicture}
+        \node[draw=wheyogreen!40, fill=wheyocard, rounded corners=5pt, inner sep=6pt] {
+          \begin{minipage}{0.94\textwidth}
+            \textcolor{wheyogreen}{\scriptsize\textbf{\textsf{PILLAR 4: ADS \& BRAND PARTNERSHIPS}}}\\[3pt]
+            \textbf{\textcolor{wheyotext}{\footnotesize Direct Access to Active Lifters:}}
+            \begin{itemize}\setlength{\itemsep}{2pt}
+              \item {\tiny \textbf{Targeted Physical Sampling:} National nutrition brands (MuscleBlaze, Optimum Nutrition, Fast\&Up) pay for sample drops inside Wheyo meal deliveries.}
+              \item {\tiny \textbf{In-App Sponsored Banners:} Verified lifter inventory without programmatic ad waste.}
+              \item {\tiny \textbf{Local Gym Lead Generation:} Commercial gyms pay monthly fees to list as official Wheyo Partner Gyms with point bonuses.}
+            \end{itemize}
+          \end{minipage}
+        };
+      \end{tikzpicture}
+
+      \vspace{0.15cm}
+      \begin{tikzpicture}
+        \node[draw=wheyoborder, fill=wheyocardlight, rounded corners=4pt, inner sep=4pt] {
+          \begin{minipage}{0.94\textwidth}
+            \textcolor{wheyolime}{\scriptsize\textbf{REVENUE SPLIT AT SCALE:}}
+            {\tiny Food: 52\% $\mid$ Subscriptions: 28\% $\mid$ Supplements \& Merch: 14\% $\mid$ Ads: 6\%}
+          \end{minipage}
+        };
+      \end{tikzpicture}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% =============================================================================
+% SLIDE 9: WHY BELAGAVI FIRST? (THE STRATEGIC ADVANTAGE)
+% =============================================================================
+\begin{frame}{Why Belagavi: Strategic Advantages of Tier 2 Hubs}
+  \begin{columns}[T]
+    \begin{column}{0.50\textwidth}
+      \begin{tikzpicture}
+        \node[draw=wheyoorange!40, fill=wheyocard, rounded corners=5pt, inner sep=6pt] {
+          \begin{minipage}{0.94\textwidth}
+            \textcolor{wheyoorange}{\scriptsize\textbf{\textsf{BELAGAVI STRUCTURAL ADVANTAGES}}}\\[3pt]
+            \begin{itemize}\setlength{\itemsep}{2.5pt}
+              \item {\tiny \textbf{Compact Geography:} The primary student, hospital, and gym population lives within a \textbf{7 km radius} (Tilakwadi, Udyambag, Nehru Nagar, Camp).}
+              \item {\tiny \textbf{Lower Fixed Operating Costs:} Kitchen rent, commercial utilities, and delivery wages run 60\% below Bengaluru and Pune benchmarks.}
+              \item {\tiny \textbf{High Word-of-Mouth Density:} Hostels at KLS GIT and JNMC have connected social networks, enabling rapid organic adoption through respected campus lifters.}
+              \item {\tiny \textbf{Zero Dedicated Competitors:} Belagavi has no dedicated macro-calculated meal delivery service.}
+            \end{itemize}
+          \end{minipage}
+        };
+      \end{tikzpicture}
+    \end{column}
+
+    \begin{column}{0.46\textwidth}
+      \begin{tikzpicture}
+        \node[draw=wheyolime!30, fill=wheyocard, rounded corners=5pt, inner sep=6pt] {
+          \begin{minipage}{0.94\textwidth}
+            \textcolor{wheyolime}{\scriptsize\textbf{\textsf{BELAGAVI UNIT METRICS AT A GLANCE}}}\\[3pt]
+            \tiny
+            \renewcommand{\arraystretch}{1.2}
+            \begin{tabular}{p{2.6cm} p{1.9cm}}
+              \toprule
+              \textbf{\textcolor{wheyotext}{Metric}} & \textbf{\textcolor{wheyolime}{Belagavi Value}} \\
+              \midrule
+              Target Student Athletes & 18,000+ active \\
+              Gyms in 8 km Radius & 120+ active gyms \\
+              Kitchen Setup Capex & Under \INR 6.5 Lakhs \\
+              Delivery Rider Cost & \INR 14,000 / month / rider \\
+              Expected Kitchen Break-even & Month 4 (320 orders/day) \\
+              Local Supplier Network & 8 wholesale hatcheries \\
+              \bottomrule
+            \end{tabular}\\[3pt]
+            \textcolor{wheyogray}{\tiny Operating profitably in Belagavi provides the unit model to replicate in Hubballi-Dharwad and Kalaburagi.}
+          \end{minipage}
+        };
+      \end{tikzpicture}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% =============================================================================
+% SLIDE 10: 5 GO-TO-MARKET (GTM) STRATEGIES
+% =============================================================================
+\begin{frame}{5 GTM Strategies: Belagavi to Uttara Karnataka}
+  \begin{columns}[T]
+    \begin{column}{0.50\textwidth}
+      \begin{tikzpicture}
+        \node[draw=wheyoorange, fill=wheyocard, rounded corners=4pt, inner sep=5pt] (g1) {
+          \begin{minipage}{0.94\textwidth}
+            \textcolor{wheyoorange}{\scriptsize\textbf{GTM 1: CAMPUS AMBASSADOR \& HOSTEL DROP-BOXES}} \\
+            {\tiny Appoint 25 student athlete ambassadors across KLS GIT, KLE Tech, JNMC, and VTU. Run scheduled bulk drop-offs at hostel gates at 1:00 PM and 8:30 PM with zero delivery fee.}
+          \end{minipage}
+        };
+
+        \node[draw=wheyolime, fill=wheyocard, rounded corners=4pt, inner sep=5pt, below=0.15cm of g1] (g2) {
+          \begin{minipage}{0.94\textwidth}
+            \textcolor{wheyolime}{\scriptsize\textbf{GTM 2: SWEAT-TO-SAVOR GYM TIE-UPS}} \\
+            {\tiny Partner with 35 gyms in Tilakwadi, Camp, and Bhagyanagar. Place Wheyo QR order points at exits. Gym trainers earn an 8\% recurring affiliate fee on meal subscriptions.}
+          \end{minipage}
+        };
+
+        \node[draw=wheyocyan, fill=wheyocard, rounded corners=4pt, inner sep=5pt, below=0.15cm of g2] (g3) {
+          \begin{minipage}{0.94\textwidth}
+            \textcolor{wheyocyan}{\scriptsize\textbf{GTM 3: BELGAUM INTER-CAMPUS FITNESS LEAGUE}} \\
+            {\tiny Inter-college workout volume leaderboard (KLS GIT vs KLE Tech vs JNMC). Shareable digital athlete cards drive student-to-student acquisition on WhatsApp and Instagram.}
+          \end{minipage}
+        };
+      \end{tikzpicture}
+    \end{column}
+
+    \begin{column}{0.48\textwidth}
+      \begin{tikzpicture}
+        \node[draw=wheyogreen, fill=wheyocard, rounded corners=4pt, inner sep=5pt] (g4) {
+          \begin{minipage}{0.94\textwidth}
+            \textcolor{wheyogreen}{\scriptsize\textbf{GTM 4: UTTARA KARNATAKA EXPANSION}} \\
+            {\tiny Expand 90 km south to Hubballi-Dharwad. Serve KLE BVB Hubli (8,000+ students), SDM Medical Dharwad, and Karnatak University with 2 cloned cloud kitchens.}
+          \end{minipage}
+        };
+
+        \node[draw=wheyotext, fill=wheyocard, rounded corners=4pt, inner sep=5pt, below=0.15cm of g4] (g5) {
+          \begin{minipage}{0.94\textwidth}
+            \textcolor{wheyotext}{\scriptsize\textbf{GTM 5: CAMPUS APPAREL \& CREATINE BUNDLES}} \\
+            {\tiny Timed drops of heavyweight gym shirts and certified creatine monohydrate. Builds brand equity among collegiate athletes and diversifies revenue beyond hot meals.}
+          \end{minipage}
+        };
+      \end{tikzpicture}
+
+      \vspace{0.12cm}
+      \begin{tikzpicture}
+        \node[draw=wheyolime!40, fill=wheyocardlight, rounded corners=4pt, inner sep=4pt] {
+          \begin{minipage}{0.94\textwidth}
+            \textcolor{wheyolime}{\scriptsize\textbf{GTM TIMELINE:}}
+            {\tiny \textbf{M1--M3:} Belagavi Campuses $\to$ \textbf{M4--M6:} Belagavi Gyms $\to$ \textbf{M7--M10:} Hubli-Dharwad $\to$ \textbf{M11+:} Merch \& Supplements.}
+          \end{minipage}
+        };
+      \end{tikzpicture}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% =============================================================================
+% SLIDE 11: OPERATIONAL BLUEPRINT & HUB-AND-SPOKE (TIKZ)
+% =============================================================================
+\begin{frame}{Belagavi Hub-and-Spoke Logistics Architecture}
+  \begin{center}
+    \begin{tikzpicture}[scale=0.92, every node/.style={transform shape}]
+      % Central Kitchen Node
+      \node[draw=wheyolime, fill=wheyocardlight, rounded corners=8pt, line width=1.5pt, inner sep=7pt, align=center] (hub) at (0,0) {
+        \textcolor{wheyolime}{\textbf{\textsf{CENTRAL KITCHEN}}}\\[2pt]
+        \textcolor{wheyotext}{\scriptsize Tilakwadi / Udyambag Junction}\\[2pt]
+        {\tiny High-Volume Prep $\cdot$ Batch Macro Cook}
+      };
+
+      % Spokes: Campuses and Gym Hubs
+      \node[draw=wheyoorange, fill=wheyocard, rounded corners=5pt, inner sep=5pt, align=center] (git) at (-4.5, 1.8) {
+        \textcolor{wheyoorange}{\scriptsize\textbf{KLS GIT \& BVBCET Hub}}\\
+        {\tiny Udyambag Corridor (6,500+ Students)}\\
+        \textcolor{wheyolime}{\tiny 6 Mins $\cdot$ Batch: 1:00 PM \& 8:00 PM}
+      };
+
+      \node[draw=wheyocyan, fill=wheyocard, rounded corners=5pt, inner sep=5pt, align=center] (jnmc) at (4.5, 1.8) {
+        \textcolor{wheyocyan}{\scriptsize\textbf{JNMC / KAHER Campus Hub}}\\
+        {\tiny Nehru Nagar Medical Hostels (4,800+)}\\
+        \textcolor{wheyolime}{\tiny 12 Mins $\cdot$ Batch: 1:15 PM \& 8:15 PM}
+      };
+
+      \node[draw=wheyogreen, fill=wheyocard, rounded corners=5pt, inner sep=5pt, align=center] (vtu) at (-4.5, -1.8) {
+        \textcolor{wheyogreen}{\scriptsize\textbf{VTU HQ \& Jain College}}\\
+        {\tiny Machhe Cluster (7,200+ Students)}\\
+        \textcolor{wheyolime}{\tiny 14 Mins $\cdot$ Batch: 1:30 PM \& 8:30 PM}
+      };
+
+      \node[draw=wheyotext, fill=wheyocard, rounded corners=5pt, inner sep=5pt, align=center] (gyms) at (4.5, -1.8) {
+        \textcolor{wheyotext}{\scriptsize\textbf{Tilakwadi \& Camp Gyms}}\\
+        {\tiny 40+ Commercial Gyms (3,500+ Lifters)}\\
+        \textcolor{wheyolime}{\tiny 5 Mins $\cdot$ On-Demand \& Hourly Runs}
+      };
+
+      % Clean Connecting Lines
+      \draw[->, >=Stealth, wheyoorange, line width=1.8pt] (hub) -- (git);
+      \draw[->, >=Stealth, wheyocyan, line width=1.8pt] (hub) -- (jnmc);
+      \draw[->, >=Stealth, wheyogreen, line width=1.8pt] (hub) -- (vtu);
+      \draw[->, >=Stealth, wheyotext, line width=1.8pt] (hub) -- (gyms);
+    \end{tikzpicture}
+  \end{center}
+  \vspace{-0.25cm}
+  \begin{center}
+    {\scriptsize \textcolor{wheyogray}{Aggregated batch delivery to college gates reduces per-order delivery cost from \INR 45 down to \textbf{\INR 16}.}}
+  \end{center}
+\end{frame}
+
+% =============================================================================
+% SLIDE 12: UNIT ECONOMICS (ZERO-FLUFF MATH)
+% =============================================================================
+\begin{frame}{Unit Economics: Strong Contribution Margins \& LTV}
+  \begin{columns}[T]
+    % Left Column: Per-Order Breakdown
+    \begin{column}{0.48\textwidth}
+      \begin{tikzpicture}
+        \node[draw=wheyoborder, fill=wheyocard, rounded corners=5pt, inner sep=6pt] {
+          \begin{minipage}{0.94\textwidth}
+            \textcolor{wheyolime}{\scriptsize\textbf{\textsf{PER-MEAL ORDER ECONOMICS (INR)}}}\\[3pt]
+            \tiny
+            \renewcommand{\arraystretch}{1.15}
+            \begin{tabular}{p{3.4cm} r}
+              \textbf{Average Order Value (AOV)} & \textbf{\INR 165.00} \\
+              \midrule
+              Raw Ingredients (Chicken/Paneer/Rice) & - \INR 52.00 (31.5\%) \\
+              Eco Packaging \& Thermal Foil & - \INR 11.00 (6.7\%) \\
+              Direct Kitchen Prep Labor & - \INR 14.00 (8.5\%) \\
+              Batch Delivery Cost (Per Unit) & - \INR 16.00 (9.7\%) \\
+              Wheyo Points Applied (Avg Discount) & - \INR 8.00 (4.8\%) \\
+              \midrule
+              \textbf{\textcolor{wheyogreen}{Net Contribution Margin per Meal}} & \textbf{\textcolor{wheyogreen}{\INR 64.00 (38.8\%)}} \\
+              \bottomrule
+            \end{tabular}
+          \end{minipage}
+        };
+      \end{tikzpicture}
+    \end{column}
+
+    % Right Column: Subscription & Customer LTV
+    \begin{column}{0.48\textwidth}
+      \begin{tikzpicture}
+        \node[draw=wheyoorange!40, fill=wheyocard, rounded corners=5pt, inner sep=6pt] {
+          \begin{minipage}{0.94\textwidth}
+            \textcolor{wheyoorange}{\scriptsize\textbf{\textsf{CUSTOMER LIFETIME VALUE \& CAC}}}\\[3pt]
+            \tiny
+            \renewcommand{\arraystretch}{1.15}
+            \begin{tabular}{p{3.4cm} r}
+              Monthly Subscription Revenue & \textbf{\INR 3,200.00} \\
+              Total COGS + Delivery Cost & - \INR 1,620.00 \\
+              \midrule
+              \textbf{\textcolor{wheyolime}{Net Monthly Profit / Subscriber}} & \textbf{\textcolor{wheyolime}{\INR 1,580.00 (49.4\%)}} \\
+              \midrule
+              Average Academic Term Retention & 4.5 Months \\
+              Customer Lifetime Value (LTV) & \textbf{\INR 7,110.00} \\
+              Blended CAC (Campus ambassadors + gyms) & \textbf{\INR 115.00} \\
+              \midrule
+              \textbf{\textcolor{wheyocyan}{LTV to CAC Ratio}} & \textbf{\textcolor{wheyocyan}{61.8x}} \\
+              \bottomrule
+            \end{tabular}
+          \end{minipage}
+        };
+      \end{tikzpicture}
+    \end{column}
+  \end{columns}
+  \vspace{0.15cm}
+  \begin{center}
+    \textcolor{wheyogray}{\tiny Direct kitchen operations and scheduled campus batch delivery maintain a 38.8\% net contribution margin per meal.}
+  \end{center}
+\end{frame}
+
+% =============================================================================
+% SLIDE 13: 3-YEAR FINANCIAL PROJECTIONS
+% =============================================================================
+\begin{frame}{3-Year Financial Projections: Regional Expansion Plan}
+  \begin{center}
+    \begin{tikzpicture}
+      \node[draw=wheyoborder, fill=wheyocard, rounded corners=6pt, inner sep=6pt] {
+        \begin{minipage}{0.95\textwidth}
+          \scriptsize
+          \renewcommand{\arraystretch}{1.18}
+          \begin{tabular}{p{3.4cm} p{2.3cm} p{2.5cm} p{2.7cm}}
+            \toprule
+            \textbf{\textcolor{wheyotext}{Metric}} & \textbf{\textcolor{wheyolime}{Year 1 (Belagavi)}} & \textbf{\textcolor{wheyoorange}{Year 2 (+Hubli-Dhar)}} & \textbf{\textcolor{wheyocyan}{Year 3 (Uttara Kar)}} \\
+            \midrule
+            \textbf{Active Cloud Kitchens} & 1 Hub (Belagavi) & 3 Hubs (+Hubli, Dhar) & 8 Hubs (+Davan, Mngl) \\
+            \textbf{Monthly Active Users} & 3,200 lifters & 9,800 lifters & 28,500 lifters \\
+            \textbf{Active Monthly Subscribers} & 750 subscribers & 2,400 subscribers & 7,500 subscribers \\
+            \textbf{Daily Meals Delivered} & 950 meals/day & 3,100 meals/day & 9,200 meals/day \\
+            \midrule
+            \textbf{Food \& Subscription Rev} & \INR 2.85 Cr & \INR 9.20 Cr & \INR 27.40 Cr \\
+            \textbf{Supplements \& Merch Rev} & \INR 0.45 Cr & \INR 1.80 Cr & \INR 5.80 Cr \\
+            \textbf{Supplement Ads \& Sponsorships} & \INR 0.15 Cr & \INR 0.60 Cr & \INR 1.60 Cr \\
+            \midrule
+            \textbf{\textcolor{wheyolime}{Total Annual Run-Rate (ARR)}} & \textbf{\textcolor{wheyolime}{\INR 3.45 Cr}} & \textbf{\textcolor{wheyoorange}{\INR 11.60 Cr}} & \textbf{\textcolor{wheyocyan}{\INR 34.80 Cr}} \\
+            \textbf{\textcolor{wheyogreen}{Kitchen-Level EBITDA}} & \textbf{\textcolor{wheyogreen}{+18.5\%}} & \textbf{\textcolor{wheyogreen}{+24.0\%}} & \textbf{\textcolor{wheyogreen}{+28.5\%}} \\
+            \bottomrule
+          \end{tabular}
+        \end{minipage}
+      };
+    \end{tikzpicture}
+  \end{center}
+  \vspace{-0.15cm}
+  \begin{center}
+    {\tiny \textcolor{wheyogray}{Assumptions: Belagavi reaches 950 daily orders in Month 9. Hubli-Dharwad launched in Month 10. Modest 12\% supplement cross-sell penetration.}}
+  \end{center}
+\end{frame}
+
+% =============================================================================
+% SLIDE 14: COMPETITIVE MOAT & UNFAIR ADVANTAGE
+% =============================================================================
+\begin{frame}{Competitive Moat: Differentiators vs Existing Channels}
+  \begin{center}
+    \begin{tikzpicture}
+      \node[draw=wheyoborder, fill=wheyocard, rounded corners=6pt, inner sep=6pt] {
+        \begin{minipage}{0.95\textwidth}
+          \tiny
+          \renewcommand{\arraystretch}{1.25}
+          \begin{tabular}{p{2.3cm} p{2.3cm} p{2.3cm} p{3.1cm}}
+            \toprule
+            \textbf{\textcolor{wheyotext}{Feature / Dimension}} & \textbf{\textcolor{wheyogray}{Swiggy / Zomato}} & \textbf{\textcolor{wheyogray}{Local College Messes}} & \textbf{\textcolor{wheyolime}{WHEYO (Belagavi)}} \\
+            \midrule
+            \textbf{Protein Content} & Unknown, carb-loaded & 12g--18g (poha, rice) & \textbf{35g--65g verified clean protein} \\
+            \textbf{Price per Clean Meal} & \INR 300--450 (expensive) & \INR 60--80 (cheap but carbs) & \textbf{\INR 99--179 (Priced for students)} \\
+            \textbf{Workout Gamification} & Zero & Zero & \textbf{Gym workouts earn real meal discounts} \\
+            \textbf{Delivery Precision} & 45--60 min random & Fixed mess hours & \textbf{Post-workout 20-min / batch campus slots} \\
+            \textbf{Supplement Cross-Sell} & None & None & \textbf{Wheyo Creatine \& Whey Isolate in 1 tap} \\
+            \textbf{Community Identity} & Generic delivery app & None & \textbf{Belgaum Inter-Campus League \& Merch} \\
+            \textbf{Platform Take Rate} & 25\%--30\% commission & N/A & \textbf{Zero aggregator fee (Owned kitchen)} \\
+            \bottomrule
+          \end{tabular}
+        \end{minipage}
+      };
+    \end{tikzpicture}
+  \end{center}
+  \vspace{-0.15cm}
+  \begin{center}
+    {\scriptsize \textcolor{wheyotext}{Restaurants lack workout logging and gym discount mechanics. Fitness apps lack food production and delivery infrastructure. Wheyo runs kitchen operations, campus logistics, and athlete tracking in one regional network.}}
+  \end{center}
+\end{frame}
+
+% =============================================================================
+% SLIDE 15: THE ASK & USE OF FUNDS
+% =============================================================================
+\begin{frame}{Seed Round: \INR 1.25 Crore for 15-Month Execution}
+  \begin{columns}[T]
+    % The Ask & Milestones
+    \begin{column}{0.48\textwidth}
+      \begin{tikzpicture}
+        \node[draw=wheyolime, fill=wheyocard, rounded corners=6pt, inner sep=6pt, line width=1pt] {
+          \begin{minipage}{0.94\textwidth}
+            \textcolor{wheyolime}{\scriptsize\textbf{\textsf{THE INVESTMENT ASK}}}\\[2pt]
+            {\Large \textbf{\textcolor{wheyotext}{\INR 1.25 Crore}}} \quad \textcolor{wheyogray}{\scriptsize(\$150,000 USD)}\\[4pt]
+            \textcolor{wheyoorange}{\scriptsize\textbf{\textsf{15-MONTH TARGET MILESTONES:}}}
+            \begin{itemize}\setlength{\itemsep}{2pt}
+              \item {\tiny Fully equip and scale \textbf{Belagavi Central Cloud Kitchen} to 1,200 meals/day capacity.}
+              \item {\tiny Secure \textbf{1,500 active monthly subscribers} across KLS GIT, KLE Tech, JNMC, and VTU.}
+              \item {\tiny Open and operationalize \textbf{Hubballi-Dharwad Twin Kitchen} (BVB KLE \& SDM corridors).}
+              \item {\tiny Reach an \textbf{\INR 5.50 Cr ARR} run-rate with kitchen-level positive cash flow.}
+            \end{itemize}
+          \end{minipage}
+        };
+      \end{tikzpicture}
+    \end{column}
+
+    % Fund Utilization Breakdown
+    \begin{column}{0.48\textwidth}
+      \begin{tikzpicture}
+        \node[draw=wheyoborder, fill=wheyocard, rounded corners=6pt, inner sep=6pt] {
+          \begin{minipage}{0.94\textwidth}
+            \textcolor{wheyocyan}{\scriptsize\textbf{\textsf{USE OF PROCEEDS}}}\\[2pt]
+            \tiny
+            \renewcommand{\arraystretch}{1.15}
+            \begin{tabular}{p{3.2cm} r}
+              \textbf{Kitchen Capex \& Commercial Equipment} & 38\% (\INR 47.5 L) \\
+              {\tiny Combi ovens, blast chillers, vacuum packers} & \\
+              \textbf{Initial Inventory \& Supplements} & 22\% (\INR 27.5 L) \\
+              {\tiny White-label creatine batch, packaging, merch} & \\
+              \textbf{Campus GTM \& Gym Activations} & 20\% (\INR 25.0 L) \\
+              {\tiny Ambassador incentives, QR desks, campus league} & \\
+              \textbf{Operations, Tech \& Buffer Runway} & 20\% (\INR 25.0 L) \\
+              {\tiny Key kitchen chef hire, logistics lead, 15-mo buffer} & \\
+              \midrule
+              \textbf{\textcolor{wheyolime}{Total Seed Allocation}} & \textbf{\textcolor{wheyolime}{100\% (\INR 1.25 Cr)}} \\
+              \bottomrule
+            \end{tabular}
+          \end{minipage}
+        };
+      \end{tikzpicture}
+
+      \vspace{0.15cm}
+      \begin{tikzpicture}
+        \node[draw=wheyogreen!40, fill=wheyocardlight, rounded corners=5pt, inner sep=4pt] {
+          \begin{minipage}{0.94\textwidth}
+            \textcolor{wheyogreen}{\scriptsize\textbf{EXIT SCENARIOS:}}
+            {\tiny Strategic acquisition by national nutrition and cloud kitchen platforms (Rebel Foods, Curefoods, Cult.fit) expanding into Tier 2/3 South India, or long-term regional cash dividend generation.}
+          \end{minipage}
+        };
+      \end{tikzpicture}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% =============================================================================
+% SLIDE 16: CONCLUSION & CONTACT
+% =============================================================================
+\begin{frame}[plain]
+  \begin{tikzpicture}[remember picture, overlay]
+    \fill[wheyobg] (current page.south west) rectangle (current page.north east);
+    \shade[inner color=wheyolime!6, outer color=wheyobg] 
+      ($(current page.center)+(3,1)$) circle (4.5cm);
+
+    \draw[wheyoborder, line width=1pt] 
+      ($(current page.south west)+(0.5,0.5)$) rectangle ($(current page.north east)+(-0.5,-0.5)$);
+
+    \node[anchor=center] at ($(current page.center)+(0,0.3)$) {
+      \begin{minipage}{0.85\textwidth}
+        \centering
+        \tikz\node[fill=wheyoorange!20, draw=wheyoorange, rounded corners=4pt, inner sep=4pt] {
+          \textcolor{wheyoorange}{\scriptsize\textbf{\textsf{INVESTMENT SUMMARY}}}
+        };\\[10pt]
+        {\fontsize{22}{26}\selectfont \textbf{\textcolor{wheyotext}{Wheyo: High-Protein Daily Sustenance for Tier-2 India}}}\\[6pt]
+        {\small \textcolor{wheyotext}{Combining high-margin cloud kitchens, subscription delivery, and collegiate fitness culture.}}\\[3pt]
+        {\small \textcolor{wheyolime}{\textbf{First-mover advantage in Belagavi, Hubballi-Dharwad, and collegiate North Karnataka.}}}\\[16pt]
+
+        \begin{tikzpicture}
+          \node[draw=wheyoborder, fill=wheyocard, rounded corners=8pt, inner sep=10pt, align=center] {
+            \textcolor{wheyotext}{\textbf{WHEYO TECHNOLOGIES PVT. LTD.}}\\[3pt]
+            \textcolor{wheyogray}{\scriptsize Headquarters: Tilakwadi $\cdot$ Belagavi $\cdot$ Karnataka 590006}\\[2pt]
+            \textcolor{wheyocyan}{\scriptsize Contact: founder@wheyo.fit \quad $\mid$ \quad +91 98765 43210}\\[2pt]
+            \textcolor{wheyolime}{\scriptsize Live App: wheyo.fit \quad $\mid$ \quad Belgaum Campus League Active}
+          };
+        \end{tikzpicture}
+      \end{minipage}
+    };
+  \end{tikzpicture}
+\end{frame}
+
+\end{document}

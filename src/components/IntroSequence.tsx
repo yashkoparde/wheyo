@@ -20,54 +20,51 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
     >
       {/* Cinematic Pre-Title */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
-        animate={{ opacity: [0, 1, 1, 0], scale: [0.9, 1, 1.05, 1.1], filter: ['blur(10px)', 'blur(0px)', 'blur(0px)', 'blur(10px)'] }}
-        transition={{ duration: 2.8, times: [0, 0.2, 0.8, 1], ease: "easeInOut" }}
-        className="absolute flex flex-col items-center justify-center text-center px-4 z-10 w-full"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: [0, 1, 1, 0], scale: [0.95, 1, 1.02, 1.05] }}
+        transition={{ duration: 2.2, times: [0, 0.25, 0.75, 1], ease: "easeInOut" }}
+        className="absolute flex flex-col items-center justify-center text-center px-4 z-20 w-full"
       >
-        <span className="text-red-600 font-mono text-sm md:text-lg font-bold uppercase tracking-[0.5em] mb-3 md:mb-4">
+        <span className="text-red-500 font-mono text-sm md:text-lg font-black uppercase tracking-[0.4em] mb-2 sm:mb-3 drop-shadow-[0_2px_10px_rgba(255,0,0,0.5)]">
           Belgaum's First
         </span>
-        <span className="text-gray-200 font-display text-3xl md:text-6xl uppercase tracking-widest drop-shadow-lg">
+        <span className="text-white font-display text-3xl sm:text-5xl md:text-6xl uppercase tracking-widest drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)]">
           Cloud Protein Kitchen
         </span>
       </motion.div>
 
       {/* "WHEYO" Slam */}
       <motion.div
-        initial={{ scale: 30, opacity: 0 }}
+        initial={{ scale: 3, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 0.1, delay: 3.0, ease: "easeIn" }}
-        onAnimationComplete={() => {
-          setTimeout(onComplete, 2000); // Hold for 2s after slam
-        }}
-        className="relative flex flex-col items-center justify-center z-30 w-full"
+        transition={{ duration: 0.25, delay: 2.3, ease: "easeOut" }}
+        className="relative flex flex-col items-center justify-center z-30 w-full px-4"
       >
         <motion.h1 
-          animate={{ x: [0, -15, 15, -10, 10, 0], y: [0, 15, -15, 10, -10, 0] }}
-          transition={{ duration: 0.4, delay: 3.0 }}
-          className="text-[28vw] md:text-[22rem] font-black uppercase tracking-tighter leading-none text-white drop-shadow-[0_0_50px_rgba(255,0,0,0.8)]"
+          animate={{ x: [0, -10, 10, -5, 5, 0], y: [0, 8, -8, 4, -4, 0] }}
+          transition={{ duration: 0.35, delay: 2.35 }}
+          className="text-[26vw] sm:text-[20vw] md:text-[14rem] lg:text-[18rem] font-black uppercase tracking-tighter leading-none text-white drop-shadow-[0_0_60px_rgba(220,38,38,0.7)]"
         >
           WHEYO
         </motion.h1>
         <motion.div
-          initial={{ opacity: 0, scale: 1.5 }}
+          initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.2, delay: 3.15, type: "spring", stiffness: 200 }}
-          className="bg-red-600 text-white px-6 py-2 md:py-4 mt-[-6vw] md:mt-[-4vw] z-40 transform -rotate-2 shadow-2xl border-2 border-black"
+          transition={{ duration: 0.25, delay: 2.5, type: "spring", stiffness: 220 }}
+          className="bg-red-600 text-white px-5 sm:px-8 py-2 sm:py-3.5 mt-[-4vw] sm:mt-[-3vw] md:mt-[-2.5rem] z-40 transform -rotate-2 shadow-[0_10px_30px_rgba(220,38,38,0.5)] border-2 border-black"
         >
-          <h2 className="text-2xl md:text-6xl font-display uppercase tracking-widest m-0 leading-none">
+          <h2 className="text-xl sm:text-3xl md:text-5xl font-display uppercase tracking-widest m-0 leading-none">
             The Protein Kitchen
           </h2>
         </motion.div>
       </motion.div>
 
-      {/* Impact Flash & Blood Splatter */}
+      {/* Impact Flash */}
       <motion.div
         initial={{ opacity: 0 }}
-        animate={{ opacity: [0, 1, 0.4, 0] }}
-        transition={{ duration: 1.5, delay: 3.0, times: [0, 0.05, 0.2, 1] }}
-        className="absolute inset-0 bg-red-600 mix-blend-overlay pointer-events-none z-40"
+        animate={{ opacity: [0, 0.8, 0] }}
+        transition={{ duration: 0.6, delay: 2.3, times: [0, 0.1, 1] }}
+        className="absolute inset-0 bg-red-600 mix-blend-screen pointer-events-none z-40"
       />
       <motion.div
         initial={{ opacity: 0, scale: 0.5 }}
